@@ -15,7 +15,7 @@ function insert(url, selector) {
 		if (selector) {
 			content.innerHTML = doc.querySelector(selector).innerHTML;
 		} else {
-			content.innerHTML = doc.innerHTML;
+			content.innerHTML = html;
 		}
 	  })
 	  .catch(error => {
