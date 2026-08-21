@@ -1,4 +1,4 @@
-function insert(url) {
+function insert(url, selector) {
 	const here = document.currentScript;
 	const content = document.createElement("div");
 	here.parentNode.insertBefore(content, here);
@@ -8,7 +8,18 @@ function insert(url) {
 			return response.text();
 		}
 		throw response;
-	}).then(function (text) {
-		content.innerHTML = text;
-	});
+	}).then(html => {
+	    const parser = new DOMParser();
+		const doc = parser.parseFromString(html, "text/html");
+
+		if (selector) {
+			content.innerHTML = doc.querySelector(selector).innerHTML;
+		} else {
+			content.innerHTML = doc.innerHTML;
+		}
+	  })
+	  .catch(error => {
+	     content.innerHTML = 'Failed to fetch page: ' + error;
+	     console.error('Failed to fetch page: ', error);
+	  })
 }
