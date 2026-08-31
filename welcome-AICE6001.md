@@ -1,4 +1,6 @@
-## Welcome
+---
+layout: plain
+---
 
 Welcome to the homepage for the ECS [COMP6258 Differentiable Programming and Deep Learning](https://secure.ecs.soton.ac.uk/module/COMP6258) module.
 
