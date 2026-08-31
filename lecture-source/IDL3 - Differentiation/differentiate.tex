@@ -86,8 +86,8 @@
 \begin{itemize}
 	\item The big idea: optimisation by following gradients
 	\item Recap: what are gradients and how do we find them?
-	\item Recap: Singular Value Decomposition and its applications
-	\item Example: Computing SVD using gradients - The Netflix Challenge
+	\item Jacobians as local linear maps
+	\item Jacobian-vector and vector-Jacobian products
 \end{itemize}
 \end{frame}
 
@@ -348,26 +348,24 @@ where $\frac{\partial \bm y}{\partial \bm x}$ is the $n \times m$ Jacobian matri
 
 \end{frame}
 
-\begin{frame}
-\frametitle{Recap: what are gradients and how do we find them?}
-\framesubtitle{The chain rule for Tensors}
-\begin{itemize}
-	\item<+-> Conceptually, the simplest way to think about gradients of tensors is to imagine flattening them into vectors, computing the vector-valued gradient and then reshaping the gradient back into a tensor. 
-	\begin{itemize}
-		\item<+-> In this way we're still just multiplying Jacobians by gradients. 
-	\end{itemize}
-	\item<+-> More formally, consider the gradient of a scalar $z$ with respect to a tensor $\mathbf{X}$ to be denoted as $\nabla_{\mathbf{X}}z$. 
-	\begin{itemize}
-		\item<+-> Indices into $\mathbf{X}$ now have multiple coordinates, but we can generalise by using a single variable $i$ to represent the complete tuple of indices. 
-		\begin{itemize}
-			\item<+-> For all index tuples $i$, $(\nabla_{\mathbf{X}}z)_i$ gives $\frac{\partial z}{\partial \mathsf{X}_i}$.
-		\end{itemize}
-		\item<+-> Thus, if $\mathbf{Y} = g(\mathbf{X})$ and $z = f(\mathbf{Y})$ then $\nabla_{\mathbf{X}}z = \sum_j (\nabla_{\mathbf{X}}\mathsf{Y}_j)\frac{\partial z}{\partial \mathsf{Y}_j}$.
-	\end{itemize}
-\end{itemize}
-
-
-\end{frame}
+% \begin{frame}
+% \frametitle{Recap: what are gradients and how do we find them?}
+% \framesubtitle{The chain rule for Tensors}
+% \begin{itemize}
+% 	\item<+-> Conceptually, the simplest way to think about gradients of tensors is to imagine flattening them into vectors, computing the vector-valued gradient and then reshaping the gradient back into a tensor. 
+% 	\begin{itemize}
+% 		\item<+-> In this way we're still just multiplying Jacobians by gradients. 
+% 	\end{itemize}
+% 	\item<+-> More formally, consider the gradient of a scalar $z$ with respect to a tensor $\mathbf{X}$ to be denoted as $\nabla_{\mathbf{X}}z$. 
+% 	\begin{itemize}
+% 		\item<+-> Indices into $\mathbf{X}$ now have multiple coordinates, but we can generalise by using a single variable $i$ to represent the complete tuple of indices. 
+% 		\begin{itemize}
+% 			\item<+-> For all index tuples $i$, $(\nabla_{\mathbf{X}}z)_i$ gives $\frac{\partial z}{\partial \mathsf{X}_i}$.
+% 		\end{itemize}
+% 		\item<+-> Thus, if $\mathbf{Y} = g(\mathbf{X})$ and $z = f(\mathbf{Y})$ then $\nabla_{\mathbf{X}}z = \sum_j (\nabla_{\mathbf{X}}\mathsf{Y}_j)\frac{\partial z}{\partial \mathsf{Y}_j}$.
+% 	\end{itemize}
+% \end{itemize}
+% \end{frame}
 
 \begin{frame}
 \frametitle{Recap: what are gradients and how do we find them?}
@@ -401,11 +399,30 @@ $\frac{\partial \mathcal{L}}{\partial W_{uv}} = \sum_{i,j}\frac{\partial \mathca
 \frametitle{Recap: what are gradients and how do we find them?}
 \framesubtitle{Example: $\nabla_{\bm W} f(\bm X \bm W)$}
 \begin{itemize}
-	\item<+-> Putting every together, we have: $\frac{\partial \mathcal{L}}{\partial W_{uv}} = \sum_{i}\frac{\partial \mathcal{L}}{\partial D_{iv}}X_{iu}$.
+	\item<+-> Putting everything together, we have: $\frac{\partial \mathcal{L}}{\partial W_{uv}} = \sum_{i}\frac{\partial \mathcal{L}}{\partial D_{iv}}X_{iu}$.
 	\item<+-> As we're summing over multiplications of scalars, we can change the order: $\frac{\partial \mathcal{L}}{\partial W_{uv}} = \sum_{i}X_{iu}\frac{\partial \mathcal{L}}{\partial D_{iv}}$.
 	\item<+-> and note that the sum over $i$ is doing a dot product with row $u$ and column $v$ if we transpose $X_{iu}$ to $X^\top_{ui}$: $\frac{\partial \mathcal{L}}{\partial W_{uv}} = \sum_{i}X^\top_{ui}\frac{\partial \mathcal{L}}{\partial D_{iv}}$.
 	\item<+-> \vspace{5mm} We can then see that if we want this for all values of $\bm W$ it simply generalises to: $\frac{\partial \mathcal{L}}{\partial \bm W} = \bm X^\top\frac{\partial \mathcal{L}}{\partial \bm D}$.
 \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Recap: what are gradients and how do we find them?}
+\framesubtitle{That worked, but the indices were a pain!}
+
+\begin{itemize}
+	\item<+-> What did we actually do in the previous derivation?
+	\begin{itemize}
+		\item<+-> We worked out which elements of $\bm D$ depended on a particular element $W_{uv}$.
+		\item<+-> We multiplied each local derivative by the corresponding sensitivity $\frac{\partial \mathcal{L}}{\partial D_{ij}}$.
+		\item<+-> We summed over all of the ways in which changing $W_{uv}$ could affect the loss.
+	\end{itemize}
+	\item<+-> This is all perfectly manageable for $\bm D=\bm X\bm W$...
+	\begin{itemize}
+		\item<+-> ...but we don't want to repeat that index-heavy argument for every operation in a deep model!
+	\end{itemize}
+\end{itemize}
+
 \end{frame}
 
 
@@ -421,7 +438,129 @@ $\frac{\partial \mathcal{L}}{\partial W_{uv}} = \sum_{i,j}\frac{\partial \mathca
 		\item<+-> \textbf{The gradient of the loss with respect to a parameter tells you how much the loss will change with a small perturbation to that parameter.}
 	\end{itemize}
 \end{itemize}
+\end{frame}
 
+
+\begin{frame}
+\frametitle{Jacobians as local linear maps}
+\framesubtitle{Packaging up all of those partial derivatives}
+\begin{itemize}
+	\item<+-> For a function $f:\mathbb{R}^m\rightarrow\mathbb{R}^n$, the Jacobian collects all of the partial derivatives into an $n\times m$ matrix:
+	\begin{align*}
+		(J_f(\bm x))_{ji}=\frac{\partial f_j}{\partial x_i}.
+	\end{align*}
+	\item<+-> More usefully, the Jacobian describes the best linear approximation to $f$ close to $\bm x$ (c.f. the first-order Taylor Series expansion):
+	\begin{align*}
+		f(\bm x+\Delta\bm x)\approx f(\bm x)+J_f(\bm x)\Delta\bm x.
+	\end{align*}
+	\item<+-> So, the Jacobian tells us how a small input perturbation produces a small output perturbation.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Jacobians as local linear maps}
+\framesubtitle{Do we actually want the whole Jacobian?}
+\begin{itemize}
+	\item<+-> Suppose $f$ has millions of inputs and millions of outputs.
+	\begin{itemize}
+		\item<+-> Writing down $J_f$ explicitly would require trillions of entries!
+	\end{itemize}
+	\item<+-> Fortunately, most of the time we only need to answer one of two questions:
+	\begin{enumerate}
+		\item<+-> Given a particular perturbation of the inputs, what happens to the outputs?
+		\item<+-> Given a particular sensitivity at the outputs, what are the corresponding sensitivities at the inputs?
+	\end{enumerate}
+	\item<+-> These are \emph{Jacobian-vector products} and \emph{vector-Jacobian products}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Jacobian-vector products}
+\framesubtitle{Push a perturbation forwards}
+\begin{itemize}
+	\item<+-> Let $\bm v\in\mathbb{R}^m$ describe a direction in which we perturb the input to $f$.
+	\item<+-> The corresponding first-order change in the output is the \textbf{Jacobian-vector product} (JVP):
+	\begin{align*}
+		\operatorname{JVP}_f(\bm x,\bm v)
+		&=J_f(\bm x)\bm v \\
+		&=\left.\frac{d}{d\epsilon}f(\bm x+\epsilon\bm v)\right|_{\epsilon=0}.
+	\end{align*}
+	\item<+-> A JVP maps one chosen input perturbation to its resulting output perturbation.
+	\begin{itemize}
+		\item<+-> We can compute this product without ever constructing the complete Jacobian.
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Vector-Jacobian products}
+\framesubtitle{Pull a sensitivity backwards}
+\begin{itemize}
+	\item<+-> Now let $\bm u\in\mathbb{R}^n$ describe how sensitive some later scalar value is to the outputs of $f$.
+	\item<+-> The literal vector-Jacobian product is $\bm u^\top J_f(\bm x)$. As we write sensitivities as column vectors, we use its transpose:
+	\begin{align*}
+		\operatorname{VJP}_f(\bm x,\bm u)=J_f(\bm x)^\top\bm u.
+	\end{align*}
+	\item<+-> Equivalently, this is the gradient of the scalar-valued function $\bm u^\top f(\bm x)$:
+	\begin{align*}
+		J_f(\bm x)^\top\bm u=\nabla_{\bm x}\bigl(\bm u^\top f(\bm x)\bigr).
+	\end{align*}
+	\item<+-> A VJP takes sensitivities at the output and propagates them back to the input.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{JVPs and VJPs}
+\framesubtitle{Returning to $\bm D=\bm X\bm W$}
+\begin{itemize}
+	\item<+-> Consider the function $g(\bm W)=\bm X\bm W$.
+	\item<+-> If we perturb the weights by $\Delta\bm W$, the JVP pushes that perturbation forwards:
+	\begin{align*}
+		\Delta\bm D=\operatorname{JVP}_g(\bm W,\Delta\bm W)=\bm X\Delta\bm W.
+	\end{align*}
+	\item<+-> If $\bm G=\frac{\partial\mathcal{L}}{\partial\bm D}$ contains the sensitivities arriving from later in the computation, the VJP pulls them backwards:
+	\begin{align*}
+		\operatorname{VJP}_g(\bm W,\bm G)=\bm X^\top\bm G
+		=\frac{\partial\mathcal{L}}{\partial\bm W}.
+	\end{align*}
+	\item<+-> This is exactly the result we obtained from the element-wise derivation.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{JVPs and VJPs}
+\framesubtitle{The chain rule is composition of products}
+\begin{itemize}
+	\item<+-> If $h=g\circ f$, then a perturbation can be pushed forwards one operation at a time:
+	\begin{align*}
+		J_h(\bm x)\bm v
+		=J_g(f(\bm x))\bigl(J_f(\bm x)\bm v\bigr).
+	\end{align*}
+	\item<+-> Likewise, a sensitivity can be pulled backwards one operation at a time:
+	\begin{align*}
+		J_h(\bm x)^\top\bm u
+		=J_f(\bm x)^\top\bigl(J_g(f(\bm x))^\top\bm u\bigr).
+	\end{align*}
+	\item<+-> For a scalar loss, the final sensitivity is simply $1$.
+	\begin{itemize}
+		\item<+-> Backpropagation (in the coming lectures) is a sequence of VJPs, starting at the loss and working backwards through the computation.
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{JVPs and VJPs}
+\framesubtitle{What about matrices and higher-order tensors?}
+\begin{itemize}
+	\item<+-> Conceptually, we could flatten every tensor into a vector, construct the corresponding Jacobian, perform the product and reshape the result.
+	\item<+-> In practice, we preserve the natural tensor shapes and directly compute the required product.
+	\begin{itemize}
+		\item<+-> We avoid explicitly constructing a potentially enormous Jacobian.
+		\item<+-> The result has the natural shape of the input for a VJP, or the output for a JVP.
+	\end{itemize}
+	\item<+-> Later, we'll see how forward- and reverse-mode automatic differentiation compute these products through an arbitrary program.
+\end{itemize}
 \end{frame}
 
 \end{document}

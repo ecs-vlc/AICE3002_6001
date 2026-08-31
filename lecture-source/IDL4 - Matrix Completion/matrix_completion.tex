@@ -128,89 +128,255 @@ For real $\bm A:$ \\
 \end{frame}
 
 \begin{frame}
-\frametitle{Example: Computing SVD using gradients - The Netflix Challenge}
+\frametitle{The Netflix Challenge}
+\framesubtitle{A million-dollar prediction problem}
 \begin{itemize}
-	\uncover<+->{\item There are many standard ways of computing the SVD:
+	\item<+-> In 2006, Netflix released a large collection of customer ratings and offered \$1 million for improving its recommender system by 10\%.
+	\item<+-> The released data contained:
 	\begin{itemize}
-		\item e.g. `Power iteration', or `Arnoldi iteration' or `Lanczos algorithm' coupled with the `Gram-Schmidt process' for orthonormalisation
-	\end{itemize}}
-	\uncover<+->{\item but, these don't necessarily scale up to really big problems
+		\item<+-> $100{,}480{,}507$ ratings;
+		\item<+-> from $480{,}189$ customers;
+		\item<+-> for $17{,}770$ films.
+	\end{itemize}
+	\item<+-> Given a customer, a film and everything that customer had rated previously: \textbf{what rating would they give the film?}
+\end{itemize}
+\blfootnote{\tiny Simon Funk, \href{https://sifter.org/~simon/journal/20061211.html}{Netflix Update: Try This at Home}, 2006.}
+\end{frame}
+
+\begin{frame}
+\frametitle{The Netflix Challenge}
+\framesubtitle{The user--film rating matrix}
+\begin{columns}
+\begin{column}{0.58\textwidth}
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{c|cccccc}
+ & $M_1$ & $M_2$ & $M_3$ & $M_4$ & $M_5$ & $M_6$ \\ \hline
+$U_1$ & 5 & $\cdot$ & 2 & $\cdot$ & 4 & $\cdot$ \\
+$U_2$ & $\cdot$ & 3 & $\cdot$ & 5 & $\cdot$ & 4 \\
+$U_3$ & 4 & $\cdot$ & 1 & $\cdot$ & $\cdot$ & ? \\
+$U_4$ & $\cdot$ & 2 & $\cdot$ & 4 & 5 & $\cdot$ \\
+$U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
+\end{tabular}
+\end{column}
+\begin{column}{0.42\textwidth}
+\begin{itemize}
+	\item<+-> Rows represent users.
+	\item<+-> Columns represent films.
+	\item<+-> Entries are ratings from 1 to 5.
+	\item<+-> A dot is \emph{unobserved}; it is not a rating of zero.
+\end{itemize}
+\end{column}
+\end{columns}
+\vspace{0.5em}
+\uncover<+->{The complete matrix would contain about $8.5$ billion entries, but only about $1.2\%$ of them were observed.}
+\end{frame}
+
+\begin{frame}
+\frametitle{The Netflix Challenge}
+\framesubtitle{Why might a low-rank model work?}
+\begin{itemize}
+	\item<+-> Films are not completely unrelated objects.
 	\begin{itemize}
-		\item e.g. computing the SVD of a sparse matrix with 17770 rows, 480189 columns and 100480507 non-zero entries!
-		\item this corresponds to the data provided by Netflix when they launched the \emph{Netflix Challenge} in 2006. 
-	\end{itemize}}
-	\item<+-> OK, so what can you do?
+		\item<+-> They have properties such as genre, style, cast, age and overall popularity.
+	\end{itemize}
+	\item<+-> Users are not completely unrelated either.
 	\begin{itemize}
-		\item<+-> The `Simon Funk' solution: realise that there is a really simple (and quick) way to compute the SVD by following gradients...
+		\item<+-> They have different preferences for those properties, as well as different tendencies in how they use the rating scale.
+	\end{itemize}
+	\item<+-> Perhaps both films and users can be represented using a relatively small number of \emph{latent factors}.
+	\begin{itemize}
+		\item<+-> The factors are learned from the ratings; we do not tell the model that one of them should mean ``likes action films''.
 	\end{itemize}
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Example: Computing SVD using gradients - The Netflix Challenge}
-\framesubtitle{Deriving a gradient-descent solution to SVD}
+\frametitle{Learning a low-rank model from observed ratings}
+\framesubtitle{SVD gives us the idea, but not quite the solution}
 \begin{itemize}
-	\item<+-> One of the definitions of rank-$\rho$ SVD of a matrix $\bm A$ is that it minimises reconstruction error in terms of the Frobenius norm.
-	\item<+-> Without loss of generality we can write SVD as a 2-matrix decomposition $\bm A = \hat{\bm U} \hat{\bm V}^T$ by rolling in the square roots of $\bm\Sigma$ to both $\hat{\bm U}$ and $\hat{\bm V}$: $\hat{\bm U} = \bm U \bm\Sigma^{0.5}$ and $\hat{\bm V}^\top = \bm \Sigma^{0.5} \bm V^\top$.
-	\item<+-> Then we can define the decomposition as finding $\min\limits_{\hat{\bm U}, \hat{\bm V}}( \| \bm A - \hat{\bm U}\hat{\bm V}^\top \|_{\rm F}^2 )$
+	\item<+-> If the entire matrix $\bm R$ were known, a truncated SVD would give its best low-rank approximation in terms of the Frobenius norm.
+	\item<+-> But most entries of $\bm R$ are unknown, and treating them as zeros would solve the wrong problem.
+	\item<+-> Instead, construct two smaller matrices:
+	\begin{align*}
+		\bm P&\in\mathbb{R}^{n_{\rm users}\times k}, &
+		\bm Q&\in\mathbb{R}^{n_{\rm films}\times k},
+	\end{align*}
+	where $k$ is the number of latent factors.
+	\item<+-> The predicted rating is the dot product of a user's factors and a film's factors:
+	\begin{align*}
+		\hat r_{ui}=\bm p_u^\top\bm q_i.
+	\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Learning a low-rank model from observed ratings}
+\framesubtitle{Only score the ratings that we actually observed}
+\begin{itemize}
+	\item<+-> Let $\Omega$ be the set of user--film pairs for which Netflix supplied a rating.
+	\item<+-> We can learn $\bm P$ and $\bm Q$ by minimising:
+	\begin{align*}
+		\mathcal{L}(\bm P,\bm Q)
+		&=\sum_{(u,i)\in\Omega}\Bigl[
+		\left(r_{ui}-\bm p_u^\top\bm q_i\right)^2 \\
+		&\qquad+\lambda\left(\lVert\bm p_u\rVert^2+\lVert\bm q_i\rVert^2\right)\Bigr].
+	\end{align*}
+	\item<+-> This is usually called \emph{matrix factorisation} rather than SVD:
+	\begin{itemize}
+		\item<+-> there are no orthogonality constraints or explicit singular values;
+		\item<+-> and the loss is evaluated only over $\Omega$.
+	\end{itemize}
 \end{itemize}
 \end{frame}
 
 
 \begin{frame}
-\frametitle{Example: Computing SVD using gradients - The Netflix Challenge}
-\framesubtitle{Deriving a gradient-descent solution to SVD}
-\uncover<+->{
-Start by expanding our optimisation problem:
-
-\begin{align*}
-	\min\limits_{\hat{\bm U}, \hat{\bm V}}( \| \bm A - \hat{\bm U}\hat{\bm V}^\top \|_{\rm F}^2 ) &= \min\limits_{\hat{\bm U}, \hat{\bm V}}( \sum_r \sum_c (A_{rc} - \hat{U}_r\hat{V}^\top_{:,c})^2 )	\\
-			  &= \min\limits_{\hat{\bm U}, \hat{\bm V}}( \sum_r \sum_c (A_{rc} - \sum_{p=1}^{\rho}\hat{U}_{rp}\hat{V}_{cp})^2 )	 
-\end{align*}
-}
-
-\uncover<+->{Let $e_{rc} = A_{rc} - \sum_{p=0}^{\rho}\hat{U}_{rp}\hat{V}_{cp}$ denote the error. Then, our problem becomes:
-
-\begin{align*}
-{\rm Minimise}\,\mathcal{L} &= \sum_r \sum_c e_{rc}^2
-\end{align*}
-
-We can then differentiate with respect to specific variables $\hat{U}_{rq}$ and $\hat{V}_{cq}$
-}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Example: Computing SVD using gradients - The Netflix Challenge}
-\framesubtitle{Deriving a gradient-descent solution to SVD}
-\uncover<+->{
-We can then differentiate with respect to specific variables $\hat{U}_{rq}$ and $\hat{V}_{cq}$:
-\begin{align*}
-	\frac{\partial \mathcal{L}}{\partial \hat{U}_{rq}} &= \sum_r \sum_c 2e_{rc} \frac{\partial e}{\partial \hat{U}_{rq}} = -2 \sum_r \sum_c \hat{V}_{cq} e_{rc} \\
-	\frac{\partial \mathcal{L}}{\partial \hat{V}_{cq}} &= \sum_r \sum_c 2e_{rc} \frac{\partial e}{\partial \hat{V}_{cq}} = -2 \sum_r \sum_c \hat{U}_{rq} e_{rc} \\
-\end{align*}
-}
-
-\uncover<+->{
-and use this as the basis for a gradient descent algorithm:
-
-\begin{align*}
-	\hat{U}_{rq} &\Leftarrow \hat{U}_{rq} + \lambda \sum_r \sum_c \hat{V}_{cq}e_{rc} \\
-	\hat{V}_{cq} &\Leftarrow \hat{V}_{cq} + \lambda \sum_r \sum_c \hat{U}_{rq}e_{rc}
-\end{align*}
-}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{Example: Computing SVD using gradients - The Netflix Challenge}
-\framesubtitle{Deriving a gradient-descent solution to SVD}
-
+\frametitle{Learning a low-rank model from observed ratings}
+\framesubtitle{Can we derive an update for one rating?}
 \begin{itemize}
-	\item<+-> A stochastic version of this algorithm (updates on one single item of $\bm A$ at a time) helped win the Netflix Challenge competition in 2009.
-	\item<+-> It was both \emph{fast} and \emph{memory efficient}
+	\item<+-> Take one observed rating $(u,i)\in\Omega$ and define its residual:
+	\begin{align*}
+		e_{ui}=r_{ui}-\bm p_u^\top\bm q_i.
+	\end{align*}
+	\item<+-> Its regularised loss is:
+	\begin{align*}
+		\ell_{ui}=e_{ui}^2+\lambda\left(\lVert\bm p_u\rVert^2+\lVert\bm q_i\rVert^2\right).
+	\end{align*}
+	\item<+-> What are $\frac{\partial\ell_{ui}}{\partial\bm p_u}$ and $\frac{\partial\ell_{ui}}{\partial\bm q_i}$?
+	\begin{itemize}
+		\item<+-> Start with one component, $p_{uj}$ or $q_{ij}$, and use the chain rule.
+	\end{itemize}
 \end{itemize}
+\end{frame}
 
+
+\begin{frame}
+\frametitle{Learning a low-rank model from observed ratings}
+\framesubtitle{The resulting gradients are rather simple}
+\begin{align*}
+	\uncover<+->{\frac{\partial e_{ui}}{\partial\bm p_u}&=-\bm q_i,
+	&\frac{\partial e_{ui}}{\partial\bm q_i}&=-\bm p_u \\[0.75em]}
+	\uncover<+->{\frac{\partial\ell_{ui}}{\partial\bm p_u}
+	&=-2e_{ui}\bm q_i+2\lambda\bm p_u,
+	&\frac{\partial\ell_{ui}}{\partial\bm q_i}
+	&=-2e_{ui}\bm p_u+2\lambda\bm q_i.}
+\end{align*}
+
+\uncover<+->{Absorbing the factor of two into the learning rate, stochastic gradient descent gives:}
+\begin{align*}
+	\uncover<+->{\bm p_u&\Leftarrow\bm p_u+\eta(e_{ui}\bm q_i-\lambda\bm p_u), \\}
+	\uncover<+->{\bm q_i&\Leftarrow\bm q_i+\eta(e_{ui}\bm p_u-\lambda\bm q_i).}
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Learning a low-rank model from observed ratings}
+\framesubtitle{One rating at a time}
+\begin{itemize}
+	\item<+-> Initialise the user and film factors to small values.
+	\item<+-> Repeatedly visit the ratings in $\Omega$:
+	\begin{enumerate}
+		\item<+-> predict $\hat r_{ui}=\bm p_u^\top\bm q_i$;
+		\item<+-> compute the residual $e_{ui}=r_{ui}-\hat r_{ui}$;
+		\item<+-> update only $\bm p_u$ and $\bm q_i$.
+	\end{enumerate}
+	\item<+-> Each update touches only two vectors of length $k$.
+	\begin{itemize}
+		\item<+-> A complete pass costs $\mathcal{O}(k|\Omega|)$ rather than operating on all $8.5$ billion possible entries.
+	\end{itemize}
+	\item<+-> In an implementation, compute the two updates simultaneously or retain the old value of $\bm p_u$ for the update to $\bm q_i$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Learning a low-rank model from observed ratings}
+\framesubtitle{Don't make the latent factors explain the obvious stuff}
+\begin{itemize}
+	\item<+-> Some films are broadly popular, and some users give consistently higher ratings than others.
+	\item<+-> Add a global mean and user and film biases:
+	\begin{align*}
+		\hat r_{ui}=\mu+b_u+b_i+\bm p_u^\top\bm q_i.
+	\end{align*}
+	\item<+-> The latent factors can then focus on interactions between particular kinds of users and films.
+	\item<+-> Regularisation is especially important for users and films with very few ratings.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{The Netflix Challenge}
+\framesubtitle{Where does the Simon Funk SVD fit?}
+\begin{itemize}
+	\item<+-> Simon Funk publicly described a remarkably simple gradient-based factorisation during the competition.
+	\begin{itemize}
+		\item<+-> His implementation trained one latent feature at a time, cached residuals and added shrinkage to reduce overfitting.
+	\end{itemize}
+	\item<+-> It made the basic idea accessible and demonstrated that it could be both fast and memory efficient.
+	\item<+-> Matrix-factorisation models became important ingredients in leading solutions...
+	\begin{itemize}
+		\item<+-> ...but the 2009 winning system was a large blend of many predictors, not Funk's algorithm alone.
+	\end{itemize}
+\end{itemize}
+\blfootnote{\tiny Sources: \href{https://sifter.org/~simon/journal/20061211.html}{Funk (2006)}; \href{https://www.asc.ohio-state.edu/statistics/dmsl/GrandPrize2009_BPC_BellKor.pdf}{Koren, The BellKor Solution to the Netflix Grand Prize (2009)}.}
+\end{frame}
+
+\begin{frame}
+\frametitle{The Netflix Challenge}
+\framesubtitle{The data were anonymous --- weren't they?}
+\begin{itemize}
+	\item<+-> Netflix did not publish customer names or contact details.
+	\item<+-> Each released record did, however, contain:
+	\begin{itemize}
+		\item<+-> a pseudonymous customer identifier;
+		\item<+-> the film that they rated;
+		\item<+-> the rating;
+		\item<+-> and the date on which they rated it.
+	\end{itemize}
+	\item<+-> Is removing a person's name sufficient to make their data anonymous?
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{The Netflix Challenge}
+\framesubtitle{Sparse behaviour can form a fingerprint}
+\begin{itemize}
+	\item<+-> An individual is unlikely to have rated exactly the same unusual combination of films, on roughly the same dates, as many other people.
+	\item<+-> Narayanan and Shmatikov showed how a little outside knowledge could be linked to the released Netflix records.
+	\begin{itemize}
+		\item<+-> Public ratings from IMDb supplied examples of that outside knowledge.
+		\item<+-> The matching procedure tolerated approximate ratings, incorrect entries and errors in rating dates.
+	\end{itemize}
+	\item<+-> Once a record was linked to a known person, their other ratings could reveal preferences that they had never made public.
+\end{itemize}
+\blfootnote{\tiny Arvind Narayanan and Vitaly Shmatikov, \href{https://www.cs.cornell.edu/~shmat/shmat_oak08netflix.pdf}{Robust De-anonymization of Large Sparse Datasets}, 2008.}
+\end{frame}
+
+\begin{frame}
+\frametitle{The Netflix Challenge}
+\framesubtitle{Pseudonymisation is not necessarily anonymisation}
+\begin{itemize}
+	\item<+-> Whether a dataset is anonymous depends on more than whether obvious identifiers have been removed.
+	\item<+-> We must also ask:
+	\begin{itemize}
+		\item<+-> How distinctive is each person's pattern of behaviour?
+		\item<+-> What auxiliary information might an attacker possess now --- or in the future?
+		\item<+-> Which attributes are actually required for the intended research?
+	\end{itemize}
+	\item<+-> Could Netflix have reduced the risk by coarsening dates, suppressing rare ratings, aggregating records, or adding noise?
+	\begin{itemize}
+		\item<+-> What would each of these do to the scientific utility of the data?
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{The Netflix Challenge}
+\framesubtitle{The two sides of sparsity}
+\begin{itemize}
+	\item<+-> The rating matrix was sparse, so we could train efficiently by updating only the two factor vectors involved in each observed rating.
+	\item<+-> Individual behaviour was also sparse, so a small set of unusual ratings could make a person's record distinctive.
+	\item<+-> The same property that made the learning problem computationally tractable helped create the privacy risk.
+\end{itemize}
 \end{frame}
 
 \end{document}
