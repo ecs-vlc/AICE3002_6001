@@ -13,7 +13,12 @@ function insert(url, selector) {
 		const doc = parser.parseFromString(html, "text/html");
 
 		if (selector) {
-			content.innerHTML = doc.querySelector(selector).innerHTML;
+			// content.innerHTML = doc.querySelector(selector).innerHTML;
+			let combinedHTML = '';
+			document.querySelectorAll(selector).forEach(el => {
+			  combinedHTML += el.innerHTML;
+			});
+			content.innerHTML = combinedHTML;
 		} else {
 			content.innerHTML = html;
 		}
