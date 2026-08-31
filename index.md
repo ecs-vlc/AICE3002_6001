@@ -9,7 +9,6 @@ credits: Maintained by <a href="http://www.ecs.soton.ac.uk/people/jsh2">Professo
 
 {% include_relative welcome-AICE3002.md %}
 
-# AICE3002 / AICE6001 lectures and assigned reading
 {% include_relative lectures.md %}
 
 {% include_relative labs.md %}

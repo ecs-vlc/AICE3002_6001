@@ -1,7 +1,6 @@
----
-layout: plain
----
+# AICE3002 / AICE6001 lectures and assigned reading
 
+<div class="content">
 AICE3002 and AICE6001 share the same taught material. The course will be delivered by <a href="https://www.ecs.soton.ac.uk/people/jsh2">Professor Jonathon Hare</a> ([email](mailto:jsh2@soton.ac.uk)) and <a href="https://www.ecs.soton.ac.uk/people/am8n17">Dr Antonia Marcu</a> ([email](mailto:am8n17@soton.ac.uk)). We have a capable team of our PhD students to facilitate the lab sessions and run some of our guest lectures.
 
 The first lecture is on Tuesday 22 September 2026 and teaching runs for 12 weeks. The regular timetable is:
@@ -9,6 +8,7 @@ The first lecture is on Tuesday 22 September 2026 and teaching runs for 12 weeks
 - Tuesdays, 09:00, 07/3027 (L/R F1)
 - Thursdays, 17:00, 07/3031 (L/R F2)
 - Fridays, 13:00, 27/2001 (L/R 1)
+
 
 The lectures and labs will all take place in person. We will endeavour to record lectures, but please do not rely on this. By taking part in this module we _expect_ you to turn up to the lectures and get involved - asking questions and provoking discussion is positively encouraged. Expect us to use a range of approaches to get you asking questions - we'll even run some of the lectures as double-acts between us to help foster debate and discussion. Some of the lecture slots will be used for "seminars" where will discuss and work through a scientific paper or problems in detail. 
 
@@ -54,3 +54,4 @@ The current working timetable/plan is below, and illustrates the topics we inten
 | 12   | Thu 10 Dec | 17:00 | 07/3031 (L/R F2) | TBC                                                                                                                    | —                                        | —                                                          | —                                                  | —                                                                                                                                                                                                                    |
 | 12   | Fri 11 Dec | 13:00 | 27/2001 (L/R 1)  | Revision                                                                                                               | —                                        | —                                                          | —                                                  | —                                                                                                                                                                                                                    |
 
+</div>
