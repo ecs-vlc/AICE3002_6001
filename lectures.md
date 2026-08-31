@@ -1,5 +1,3 @@
-# AICE3002 / AICE6001 lectures and assigned reading
-
 AICE3002 and AICE6001 share the same taught material. The course will be delivered by <a href="https://www.ecs.soton.ac.uk/people/jsh2">Professor Jonathon Hare</a> ([email](mailto:jsh2@soton.ac.uk)) and <a href="https://www.ecs.soton.ac.uk/people/am8n17">Dr Antonia Marcu</a> ([email](mailto:am8n17@soton.ac.uk)). We have a capable team of our PhD students to facilitate the lab sessions and run some of our guest lectures.
 
 The first lecture is on Tuesday 22 September 2026 and teaching runs for 12 weeks. The regular timetable is:
