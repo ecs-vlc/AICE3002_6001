@@ -1,25 +1,3 @@
----
-layout: index
-title: "AICE3002 / AICE6001: Introduction to Deep Learning"
-subtitle: "2026-27"
-githubHeader: "false"
-credits: Maintained by <a href="http://www.ecs.soton.ac.uk/people/jsh2">Professor Jonathon Hare</a> and <a href="http://www.ecs.soton.ac.uk/people/am8n17">Dr Antonia Marcu</a>.
----
-
-
-## Welcome
-
-Welcome to the homepage for the ECS [COMP6258 Differentiable Programming and Deep Learning](https://secure.ecs.soton.ac.uk/module/COMP6258) module.
-
-Differentiable Programming and Deep learning has revolutionised numerous fields in recent years. We've witnessed improvements in everything from computer vision through speech analysis to natural language processing as a result of the advent of cheap GPGPU compute coupled with large datasets and some neat algorithms. More broadly, the idea of 'Differentiable Programming', in which we define entire programs as compositions of differentiable operations which can then be optimised to fit data, looks to become a new norm in how we utilise computers.
-
-This module will look at how deep learning and differentiable programming works, from theoretical foundations right through to practical implementation. We'll study key aspects such as automatic differentiation, look at models for _deep learning_ such as convolutional and recurrent neural networks and `transformer' architectures, as well as considering current research in depth. Along the way we'll also look at aspects of biology and neuroscience, and see how ideas from these fields feed-in to current research.
-
-The overall aim of this module is not to teach you to be able to train pre-existing models (although you will learn to do that!), but rather to equip you with the fundamental skills to be able to understand and implement models and ideas that are currently being developed by researchers. We intend to equip you with the knowledge needed to understand new ideas as they are published, and give you the ability to constructively criticise, and identify limitations, of different approaches.
-
-As a word of warning, this is a mathematical module: the predominant focus is on looking at models that can be optimised via gradient methods. You need to have a good grasp of linear (matrix) algebra and matrix calculus, as well as the fundamentals of machine learning, probability and statistics. You will also necessarily be comfortable with Python programming and the use of numeric/matrix libraries such as `numpy` or `pytorch`. As such, the Foundations of Machine Learning module is a prerequisite. You'll also be expected to read and try to understand scientific papers along the way.
-
-
 ## Lectures and assigned reading
 
 The course will be delivered by <a href="http://www.ecs.soton.ac.uk/people/jsh2">Professor Jonathon Hare</a> ([email](mailto:jsh2@soton.ac.uk)) and <a href="http://www.ecs.soton.ac.uk/people/am8n17">Dr Antonia Marcu</a> ([email](mailto:am8n17@soton.ac.uk)). We have a capable team of our PhD students to facilitate the lab sessions and run some of our guest lectures.
@@ -69,49 +47,4 @@ The current working timetable/plan is below, and illustrates the topics we inten
 | 12       | 13-May   | 27/2008      | Seminar: What else? I'm a Deep Learner AMA                                                                                 |                                                  |                                                         |                                                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |                   |
 |          | 16-May   | 100/4016     | TBC: Reserved for special requests                                                                                         |                                                  |                                                         |                                                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |                   |
 |          | 16-May   | 07/3027      | TBC: Reserved for special requests                                                                                         |                                                  |                                                         |                                                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |                   |
-
-
-
-### Assorted topic lectures
-
-These are bonus lectures/talks on topics that were requested by students in previous years that you can watch. If there are additional topics that you would like covered, then let us know.
-
-
-| Topic | Description | Handouts/slides | Video |
-|-------|-------------|-----------------|-------|
-| Distributed Learning | How can you distribute large models and data over many machines? This is a huge topic, but I made two lectures for advanced machine learning on it (which I've also made available here in case you're not taking it) which cover the basics of both the hardware bottlenecks and the software mitigations to these bottlenecks. | [Interactive slides and handouts](https://github.com/jonhare/comp6208) | [Part&nbsp;1](https://southampton.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=cfdd4537-a475-4fa1-891f-ab9700ddb5af) <br/> [Part 2](https://southampton.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=acfc5efe-5e52-4c42-9c8c-ab9701157624) |
-| Attention is (possibly) all you need | Recent trends, particularly in models for mining textual data, have used "attentional" mechanisms to get breakthrough performance and move away from recurrent networks; what is this attention and how does it work? | | [link](https://southampton.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=4cc3ffd1-bd8d-4c46-b45a-abbf0126a33b) |
-| Neural architecture search | A few people have asked how you design a network architecture; that's quite a difficult question as it relies on a lot of intuition (possibly with some inspiration from biology) and trial & error. There is an alternative though... Why not let the network design itself? There are a number of approaches to what is called Neural Architecture Search, but most use horribly inefficient Reinforcement Learning, so we'll just take a little look at a nifty differentiable approach called "DARTS". |       | [link](https://southampton.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=d92f57a4-5211-4d14-9a79-abc00103ada5) | 
-| Hardware Considerations | Deep networks typically require power-hungry hardware and lots of memory. Can you reduce the requirements and optimise for lower-powered hardware? | | [link](https://southampton.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=cf3d32d1-7f66-490c-853f-abc20137ca06) |
-
-
-## Labs
-
-For 8 of the weeks we are organising a 2-hour lab session in which you will need to complete a series of worksheets. The worksheets have been designed to put the theory covered in the lectures into context, and the equip you with practical skills in implementing and training differentiable programs. A team of PhD-student demonstrators will be available in the lab to help you with any questions you might have about the topics you are working on.
-
-40% of the marks for the module are for lab work. Each of the 8 lab sessions will be accompanied by an additional assessed exercise for you to work through in your own time. You will have to work through the exercises __by yourself__ and succinctly write-up your findings. You will submit your answers/findings/working to all the assessed exercises to [handin](https://handin.ecs.soton.ac.uk/handin/2425/COMP6258/2/) in week 11 for marking (7th May, 16:00). Each of the 8 exercises will be worth 5% of your overall module mark. We recommend that you do the exercise accompanying the lab as soon as possible after the lab session, rather than leaving them all to the end.
-
-Labs will start in the first week (31st Jan) 11-1 on Fridays. The labs take place physically in a computer room (Zepler L3 labs) with the demonstrator team and Jon & Antonia. The demonstrators can offer advice on both the labs as well as the group coursework, however you should not ask them about the assessed lab exercises that you complete after the lab.
-
-The full lab schedule is below:
-
-| Week | Date   | Location   | Topic                                                                                                 | Exercise Link                        |
-|------|--------|------------|-------------------------------------------------------------------------------------------------------|--------------------------------------|
-| 1    | 31-Jan | Zepler L3  | [Introducing PyTorch](./labs/lab1/)                                                                   |   									|               
-| 2    | 07-Feb | Zepler L3  | [Automatic Differentiation](./labs/lab2/)                                                             |   									|
-| 3    | 14-Feb | Zepler L3  | [Optimisation](./labs/lab3/)                                                                          | 										|
-| 4    | 21-Feb | Zepler L3  | [Implementing simple Neural Networks using PyTorch and Torchbearer](./labs/lab4/)                     | 										|
-| 5    | 28-Feb | Zepler L3  | [Implementing and training Convolutional Neural Networks using PyTorch and Torchbearer](./labs/lab5/) | 										|
-| 6    | 07-Mar | Zepler L3  | [Using pretrained models and transfer learning](./labs/lab6)                                          | 										|
-| 7    | 14-Mar | Zepler L3  | [Recurrent Networks, Sequence Prediction and Embeddings](./labs/lab7)                                 | 										|
-| 8    | 21-Mar | Zepler L3  | [Autoencoders and Deep Generative Models](./labs/lab8)                                                | 										|
-| 9    | 28-Mar | Zepler L3  | (catch-up / questions)                                                                                |                                      |
-| 10   | 02-May | NO LAB     |                                                                                                       |                                      |
-| 11   | 09-May | NO LAB     |                                                                                                       |                                      |
-| 12   | 16-May | NO LAB     |                                                                                                       |                                      |
-
-## Where to get additional help
-
-Talk to us! You are more than welcome to arrange to meet to discuss issues related to the course during lab sessions or by appointment. The lab sessions are also facilitated by a team of our PhD students who are experts in the deep learning / differentiable programming field in their own right (many of them have published work in this space, or are close to achieving that). We can be reached by teams or [Jon's email](mailto:jsh2@soton.ac.uk) or [Antonia's email](mailto:am8n17@soton.ac.uk).
-
 
