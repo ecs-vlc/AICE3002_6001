@@ -2,7 +2,7 @@
 layout: plain
 ---
 
-Welcome to the homepage for the ECS [COMP6258 Differentiable Programming and Deep Learning](https://secure.ecs.soton.ac.uk/module/COMP6258) module.
+Welcome to the homepage for the ECS AICE6001 Introduction to Deep Learning module.
 
 Differentiable Programming and Deep learning has revolutionised numerous fields in recent years. We've witnessed improvements in everything from computer vision through speech analysis to natural language processing as a result of the advent of cheap GPGPU compute coupled with large datasets and some neat algorithms. More broadly, the idea of 'Differentiable Programming', in which we define entire programs as compositions of differentiable operations which can then be optimised to fit data, looks to become a new norm in how we utilise computers.
 
