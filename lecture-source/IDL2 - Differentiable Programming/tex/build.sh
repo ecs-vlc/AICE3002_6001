@@ -20,5 +20,5 @@ git add ../../../slides2per/
 git add ../../../handouts/
 git add ../../../lectures/
 
-magick -geometry 1920x1080 -density 320 diffprog.pdf ../diffprog/slides/%04d.png
+magick convert -geometry 1920x1080 -density 320 diffprog.pdf ../diffprog/slides/%04d.png
 git add ../diffprog/slides/*
