@@ -4,14 +4,17 @@ set -euo pipefail
 
 mkdir -p ../../lectures ../../slides2per ../../handouts
 
-latexmk -pdf autograd
-cp autograd.pdf ../../lectures/
-git add ../../lectures/
+SOURCE_NAME=autograd
+OUTPUT_NAME=autograd1
 
-latexmk -jobname=autograd-slides2per -pdf -pdflatex='pdflatex %O -interaction=nonstopmode -synctex=1 "\def\beamerclass{handout}\input{%S}"' autograd
-cp autograd-slides2per.pdf ../../slides2per/
-git add ../../slides2per/
+latexmk -jobname="$OUTPUT_NAME" -pdf "$SOURCE_NAME"
+cp "$OUTPUT_NAME.pdf" "../../lectures/$OUTPUT_NAME.pdf"
+git add "../../lectures/$OUTPUT_NAME.pdf"
 
-latexmk -jobname=autograd-handouts -pdf -pdflatex='pdflatex %O -interaction=nonstopmode -synctex=1 "\def\articlemode{articlemode}\input{%S}"' autograd
-cp autograd-handouts.pdf ../../handouts/
-git add ../../handouts/
+latexmk -jobname="$OUTPUT_NAME-slides2per" -pdf -pdflatex='pdflatex %O -interaction=nonstopmode -synctex=1 "\def\beamerclass{handout}\input{%S}"' "$SOURCE_NAME"
+cp "$OUTPUT_NAME-slides2per.pdf" "../../slides2per/$OUTPUT_NAME-slides2per.pdf"
+git add "../../slides2per/$OUTPUT_NAME-slides2per.pdf"
+
+latexmk -jobname="$OUTPUT_NAME-handouts" -pdf -pdflatex='pdflatex %O -interaction=nonstopmode -synctex=1 "\def\articlemode{articlemode}\input{%S}"' "$SOURCE_NAME"
+cp "$OUTPUT_NAME-handouts.pdf" "../../handouts/$OUTPUT_NAME-handouts.pdf"
+git add "../../handouts/$OUTPUT_NAME-handouts.pdf"
