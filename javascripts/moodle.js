@@ -23,7 +23,6 @@ function insert(url, selector) {
             // Safely resolve only if it exists and isn't an anchor or absolute already
             if (rawHref && !rawHref.startsWith('#') && !rawHref.includes('://')) {
                 el.setAttribute('href', new URL(rawHref, parentUrl).href);
-                console.log(el);
             }
         });
 
@@ -43,7 +42,7 @@ function insert(url, selector) {
 			});
 			content.innerHTML = combinedHTML;
 		} else {
-			content.innerHTML = html;
+			content.innerHTML = doc.innerHTML;
 		}
 	  })
 	  .catch(error => {
