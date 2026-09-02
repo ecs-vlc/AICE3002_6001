@@ -12,12 +12,14 @@ function insert(url, selector) {
 	    const parser = new DOMParser();
 		const doc = parser.parseFromString(html, "text/html");
 
+		const parentUrl = url.substring(0, url.lastIndexOf("/"));
+
 		// rewrite href urls
 		doc.querySelectorAll('[href]').forEach(el => {
             const rawHref = el.getAttribute('href');
             // Safely resolve only if it exists and isn't an anchor or absolute already
             if (rawHref && !rawHref.startsWith('#') && !rawHref.includes('://')) {
-                el.setAttribute('href', new URL(rawHref, url).href);
+                el.setAttribute('href', new URL(rawHref, parentUrl).href);
             }
         });
 
@@ -25,7 +27,7 @@ function insert(url, selector) {
         doc.querySelectorAll('[src]').forEach(el => {
             const rawSrc = el.getAttribute('src');
             if (rawSrc && !rawSrc.includes('://')) {
-                el.setAttribute('src', new URL(rawSrc, url).href);
+                el.setAttribute('src', new URL(rawSrc, parentUrl).href);
             }
         });
 
