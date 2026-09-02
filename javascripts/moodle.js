@@ -13,7 +13,7 @@ function insert(url, selector) {
 		const doc = parser.parseFromString(html, "text/html");
 
 		var parentUrl = url.substring(0, url.lastIndexOf("/"));
-		if parentUrl.startsWith("//") {
+		if (parentUrl.startsWith("//")) {
 			parentUrl = "https:" + parentUrl;
 		}
 
