@@ -12,7 +12,10 @@ function insert(url, selector) {
 	    const parser = new DOMParser();
 		const doc = parser.parseFromString(html, "text/html");
 
-		const parentUrl = url.substring(0, url.lastIndexOf("/"));
+		var parentUrl = url.substring(0, url.lastIndexOf("/"));
+		if parentUrl.startsWith("//") {
+			parentUrl = "https:" + parentUrl;
+		}
 
 		// rewrite href urls
 		doc.querySelectorAll('[href]').forEach(el => {
