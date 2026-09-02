@@ -42,7 +42,7 @@ function insert(url, selector) {
 			});
 			content.innerHTML = combinedHTML;
 		} else {
-			content.innerHTML = doc.innerHTML;
+			content.innerHTML = doc.documentElement.innerHTML;
 		}
 	  })
 	  .catch(error => {
