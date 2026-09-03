@@ -55,21 +55,21 @@ The following is a list of the notebooks for this lab, with links to open direct
   <tbody>
     <tr>
       <td>1.1 Linear Regression</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_1_linear_regression.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_1_linear_regression.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/docs/labs/04-linear-models/1_1_linear_regression.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/master/labs/04-linear-models/1_1_linear_regression.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/master/labs/04-linear-models/1_1_linear_regression.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/labs/04-linear-models/1_1_linear_regression.ipynb">download</a></td>
     </tr>
     <tr>
       <td>1.2 Logistic Regression</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_2_logistic_regression.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_2_logistic_regression.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/docs/labs/04-linear-models/1_2_logistic_regression.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/master/labs/04-linear-models/1_2_logistic_regression.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/master/labs/04-linear-models/1_2_logistic_regression.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/labs/04-linear-models/1_2_logistic_regression.ipynb">download</a></td>
     </tr>
     <tr>
       <td>1.3 Softmax Regression</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_3_softmax_regression.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_3_softmax_regression.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/docs/labs/04-linear-models/1_3_softmax_regression.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/master/labs/04-linear-models/1_3_softmax_regression.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/master/labs/04-linear-models/1_3_softmax_regression.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/labs/04-linear-models/1_3_softmax_regression.ipynb">download</a></td>
     </tr>
   </tbody>
 </table>
