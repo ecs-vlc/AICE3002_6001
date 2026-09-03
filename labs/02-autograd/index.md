@@ -38,7 +38,7 @@ Through this lab you'll learn how to:
 
 To work through this lab you'll use the Python 3 language in a Jupyter Notebook environment, with the `pytorch` tensor library. We will primarily be using [Google Colab](http://colab.research.google.com/) to run the notebooks as this gives you access to an environment with all the tools required. If you wish to run the notebooks locally, see the information in the section below.
 
-You will likely need to refer to the "autograd" lecture slides for this lab - you can get those here: [https://ecs-vlc.github.io/COMP6258/lectures/autograd.pdf](https://ecs-vlc.github.io/AICE3002_6001/lectures/autograd.pdf).
+You will likely need to refer to the "autograd" lecture slides for this lab - you can get those here: [https://ecs-vlc.github.io/COMP6258/lectures/autograd1.pdf](https://ecs-vlc.github.io/AICE3002_6001/lectures/autograd1.pdf) and [https://ecs-vlc.github.io/COMP6258/lectures/autograd2.pdf](https://ecs-vlc.github.io/AICE3002_6001/lectures/autograd2.pdf).
 
 The following is a list of the notebooks for this lab, with links to open directly in Google Colab (once opened you should immediately save a copy in your Google Drive otherwise anything you do will be lost once the browser closes), or to download locally. You should work through the notebooks in numeric order as they follow on from each other. 
 
