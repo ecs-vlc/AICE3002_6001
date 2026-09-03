@@ -1,0 +1,87 @@
+---
+layout: index
+title: "AICE3002 / AICE6001: Differentiable Programming and Deep Learning"
+subtitle: "2026-27"
+githubHeader: "false"
+credits: Maintained by <a href="http://www.ecs.soton.ac.uk/people/jsh2">Professor Jonathon Hare</a> and <a href="http://www.ecs.soton.ac.uk/people/am8n17">Dr Antonia Marcu</a>.
+rdir: '../../'
+---
+
+# Lab 1 - Introducing PyTorch
+
+_[Jonathon Hare, 7th Feb 2023](https://github.com/ecs-vlc/AICE3002_6001)_
+
+## Change History
+
+- 20181219: Initial version
+- 20200126: Minor updates for the 1920 AY
+- 20230107: Dataset fixes for first part made by Jiahui Liu
+- 20260111: Update instructions for installing PyTorch
+- 20260202: Fix typos etc spotted by Damian Smith
+- 20260903: Updates for new AICE modules
+
+## Acknowledgements
+
+This lab is heavily inspired by Stanford's 'Unsupervised Feature Learning and Deep Learning' tutorial (originally written by Andrew Ng and team), and Andrei Karpathy's cs213n course (also from Stanford). The bottom-up approach taken by these courses provides a sound grounding in understanding the fundamentals that make differentiable programming and deep learning possible. 
+
+## Introduction
+
+The practical aspect of our AICE3002 & AICE6001 modules is going to require you to implement and train deep neural networks and other forms of differentiable programs. Modern deep learning often works with massive datasets and complex models. Hardware acceleration is key to how we're able to train our models in a timely manner, and it could be argued that advances in GPU hardware was the key driving force that allowed Alex Krizhevsky to implement AlexNet, train it on ImageNet, smash the ILSVRC 2012 competition and kick-start the deep-learning revolution.
+
+Writing code that efficiently takes advantage of the many cores of a GPU or Tensor processor is really hard. Fortunately others have already done much of that hard work for you and produced a range of programming libraries that enable you to easily perform the algebraic operations required for deep learning on many-core hardware. 
+
+There are a number of deep learning libraries that you've undoubtedly heard of, and perhaps even used: [Tensorflow](http://tensorflow.org), [Keras](http://keras.org), [MXNet](https://mxnet.incubator.apache.org), [DL4J](https://deeplearning4j.org), [Torch](http://torch.ch), [Caffe](https://caffe2.ai), [PyTorch](http://pytorch.org), [Chainer](https://chainer.org), ...
+All of these libraries have advantages and disadvantages relative to each other. One feature that we need is 'dynamic computation graphs' which is a prerequisite for proper differentiable programming; PyTorch and chainer have this from the ground-up, as does JAX & more recent versions of TensorFlow have an implementation in "eager mode". For the AICE3002 & AICE6001 modules we're choosing to use PyTorch as the base library --- it's fast, dynamic, flexible, easy to follow, and most importantly it's what the largest proportion of the research community use (including our PhD students!).
+
+Previously, in the _Foundations of Machine Learning_ module, you learnt a number of techniques for optimisation and machine learning. This lab will remind you of some of those machine learning models (linear regression, logistic regression and softmax classification), using the PyTorch library to build practical low-level implementations. We'll also look at how the parameters of these models can be learned using gradient methods (and directly using tools such as the Moore-Penrose pseudoinverse in the case of linear regression).
+
+At this point we're going to stay away from the deep-learning library, and just focus on fundamental Tensor manipulation and linear algebra operations. In next week's lab we're going to look at the topic of Automatic Differentiation which is key to writing differentiable programs. In the third lab we'll explore PyTorch's support for constructing and optimising deep networks. By teaching you the library from the ground-up you'll be equipped with the knowledge needed to implement many of the interesting and complex models that are of interest to researchers in the field.
+
+Through this lab you'll learn how to:
+
+* Create and manipulate PyTorch tensors, and perform algebraic operations on them;
+* Implement a linear regression model using the pseudoinverse;
+* Optimise the parameters of a linear regressor using gradient descent;
+* Implement logistic regression; and
+* Implement softmax regression.
+
+## Getting started
+
+To work through this lab you'll use the Python 3 language in a Jupyter Notebook environment, with the `pytorch` tensor library and `matplotlib` package to draw graphs. We will primarily be using [Google Colab](http://colab.research.google.com/) to run the notebooks as this gives you access to an environment with all the tools required. If you wish to run the notebooks locally, see the information in the section below.
+
+The following is a list of the notebooks for this lab, with links to open directly in Google Colab (once opened you should immediately save a copy in your Google Drive otherwise anything you do will be lost once the browser closes), or to download locally. You should work through the notebooks in numeric order as they follow on from each other. 
+
+<table style="width: 100%">
+  <tbody>
+    <tr>
+      <td>1.1 Linear Regression</td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_1_linear_regression.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_1_linear_regression.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/docs/labs/04-linear-models/1_1_linear_regression.ipynb">download</a></td>
+    </tr>
+    <tr>
+      <td>1.2 Logistic Regression</td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_2_logistic_regression.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_2_logistic_regression.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/docs/labs/04-linear-models/1_2_logistic_regression.ipynb">download</a></td>
+    </tr>
+    <tr>
+      <td>1.3 Softmax Regression</td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_3_softmax_regression.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/master/docs/labs/04-linear-models/1_3_softmax_regression.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/docs/labs/04-linear-models/1_3_softmax_regression.ipynb">download</a></td>
+    </tr>
+  </tbody>
+</table>
+&nbsp;
+
+## Prerequisites for running on your own machines
+
+If you wish to run locally, you'll need access to a computer with the following installed:
+
+- `Python` (>= 3.12)
+- `notebook` (>=5.4.1)
+- `pytorch` (>= 2.6.0)
+- `matplotlib` (>= 2.2.2)
+
+If you want to work on your own machine we recommend using the Anaconda python distribution to create an environment (`conda create -n <blah> python=3.12`) and then using `pip` to install the required packages (see [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/) for platform & hardware specific instructions). 
