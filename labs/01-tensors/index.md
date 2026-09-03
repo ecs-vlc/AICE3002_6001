@@ -35,7 +35,6 @@ The following is a list of the notebooks for this lab, with links to open direct
 
 
 1.0 A gentle introduction to tensors | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/01-tensors/1_0_tensor_primer.ipynb) | [preview](https://github.com/ecs-vlc/ecs-vlc/AICE3002_6001/blob/main/labs/01-tensors/1_0_tensor_primer.ipynb) | [download](https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/docs/labs/01-tensors/1_0_tensor_primer.ipynb)
-
 1.1 Reverse Mode Automatic Differentiation | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/master/labs/01-tensors/1_1_tensor_fundamentals.ipynb) | [preview](https://github.com/ecs-vlc/AICE3002_6001/blob/master/docs/labs/01-tensors/1_1_tensor_fundamentals.ipynb) | [download](https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/docs/labs/01-tensors/1_1_tensor_fundamentals.ipynb)
 1.2 Automatic Differentiation in PyTorch | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/master/labs/01-tensors/1_2_vectorisation_batching.ipynb) | [preview](https://github.com/ecs-vlc/AICE3002_6001/blob/master/docs/labs/01-tensors/1_2_vectorisation_batching.ipynb) | [download](https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/master/docs/labs/01-tensors/1_2_vectorisation_batching.ipynb)
 
