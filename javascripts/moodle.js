@@ -22,6 +22,9 @@ function insert(url, selector) {
             const rawHref = el.getAttribute('href');
             // Safely resolve only if it exists and isn't an anchor or absolute already
             if (rawHref && !rawHref.startsWith('#') && !rawHref.includes('://')) {
+            	if (!rawHref.startsWith("/"))
+            		rawHref = "/" + rawHref;
+            	
                 el.setAttribute('href', new URL(rawHref, parentUrl).href);
             }
         });
