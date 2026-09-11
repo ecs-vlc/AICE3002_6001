@@ -7,7 +7,7 @@ credits: Maintained by <a href="http://www.ecs.soton.ac.uk/people/jsh2">Professo
 rdir: '../../'
 ---
 
-# Lab 1 - Introducing PyTorch
+# Lab 4 - Linear Models
 
 _[Jonathon Hare, 7th Feb 2023](https://github.com/ecs-vlc/AICE3002_6001)_
 
