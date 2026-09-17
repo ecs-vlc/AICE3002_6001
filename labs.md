@@ -2,7 +2,7 @@
 layout: plain
 ---
 
-For 8 (9 including an optional help session) of the weeks we are organising a 2-hour lab session in which you will need to complete a series of worksheets. The worksheets have been designed to put the theory covered in the lectures into context, and the equip you with practical skills in implementing and training differentiable programs. A team of PhD-student demonstrators will be available in the lab to help you with any questions you might have about the topics you are working on.
+For 8 (9 including an optional help session) of the weeks we are organising a 2-hour lab session in which you will need to complete a series of worksheets. The worksheets have been designed to put the theory covered in the lectures into context, and to equip you with practical skills in implementing and training differentiable programs. A team of PhD-student demonstrators will be available in the lab to help you with any questions you might have about the topics you are working on.
 
 40% of the marks for the module are for lab "investigations" that you'll complete after having done groups of labs. There will be 4 of these assessed investigations for you to work through in your own time. You will have to work through the investigations __by yourself__ and succinctly write-up your findings. You will submit your answers/findings/working to these on moodle as per the schedule below. Each of the 4 investigations will be worth 10% of your overall module mark. 
 
@@ -10,7 +10,7 @@ Labs will start in the second week (30th September) 10-12 on Wednesdays. The lab
 
 The full lab schedule is below:
 
-| Week | Date   | Location           | Topic                                                                                                  | Exercise Link                        
+| Week | Date   | Location           | Topic                                                                                                  | Investigation Link                        |
 |------|--------|--------------------|--------------------------------------------------------------------------------------------------------|-------------------------------------|
 | 1    | 23-Sep | NO LAB             |                                                                                                        |                                     |
 | 2    | 30-Sep | AICE Lab (32/3027) | [Tensor programming with PyTorch](labs/01-tensors/index.html)                                                  |   							        |
