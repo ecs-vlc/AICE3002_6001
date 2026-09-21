@@ -48,6 +48,8 @@
 \definecolor{darkblue}{RGB}{37,55,97}
 \definecolor{mellowyellow}{RGB}{247,206,70}
 
+\DeclareMathOperator*{\argmin}{arg\,min}
+
 \addtobeamertemplate{footnote}{\hskip -2em}{}
 \newcommand\blfootnote[1]{%
   \begingroup
@@ -101,7 +103,9 @@ Data & $\{\bm{x}_n, \bm{y}_n\}^N_{n=1} \qquad \{\bm{x}_n\}^N_{n=1}$
 \vspace{3mm} \\ \pause
 Function Approximator & $\bm{y} = f (\bm{x}; \bm{\theta})$ %  + \nu
 \vspace{3mm} \\ \pause
-Parameter Estimation & $\mathcal{L} = \sum^N_{n=1} \{\|\bm{y}_n - f (\bm{x}_n; \bm{\theta})\|\}^2$
+Loss function & $\mathcal{L} = \sum^N_{n=1} \|\bm{y}_n - f (\bm{x}_n; \bm{\theta})\|^2_2$
+\vspace{3mm} \\ \pause
+Parameter Estimation & $\displaystyle  \argmin_{\bm{\theta}} \mathcal{L}$
 \vspace{3mm} \\ \pause
 Prediction & $\bm{\hat y}_{N+1} = f(\bm{x}_{N+1}, \bm{\hat \theta})$
 % \vspace{3mm} \\ \pause
