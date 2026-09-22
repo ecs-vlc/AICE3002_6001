@@ -50,27 +50,27 @@ The following is a list of the notebooks for this lab, with links to open direct
   <tbody>
     <tr>
       <td>6.1 Training and evaluating simple CNNs</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/5_1_CNN.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/5_1_CNN.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/06-CNNs/5_1_CNN.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/6_1_CNN.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/6_1_CNN.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/06-CNNs/6_1_CNN.ipynb">download</a></td>
     </tr>
     <tr>
       <td>6.2 Loading a saved model</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/5_2_Loading.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/5_2_Loading.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/06-CNNs/5_2_Loading.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/6_2_Loading.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/6_2_Loading.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/06-CNNs/6_2_Loading.ipynb">download</a></td>
     </tr>
     <tr>
       <td>6.3 Visualising Convolutional Networks</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/5_3_Visualise.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/5_3_Visualise.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/06-CNNs/5_3_Visualise.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/6_3_Visualise.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/6_3_Visualise.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/06-CNNs/6_3_Visualise.ipynb">download</a></td>
     </tr>
     <tr>
       <td>6.4 More advanced networks</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/5_4_Topologies.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/5_4_Topologies.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/06-CNNs/5_4_Topologies.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/6_4_Topologies.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/06-CNNs/6_4_Topologies.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/06-CNNs/6_4_Topologies.ipynb">download</a></td>
     </tr>
   </tbody>
 </table>

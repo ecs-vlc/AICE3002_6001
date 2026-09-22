@@ -47,27 +47,27 @@ The following is a list of the notebooks for this lab, with links to open direct
   <tbody>
     <tr>
       <td>5.1 Introducing MNIST</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/4_1_MNIST.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/4_1_MNIST.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/05-MLPs/4_1_MNIST.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/5_1_MNIST.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/5_1_MNIST.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/05-MLPs/5_1_MNIST.ipynb">download</a></td>
     </tr>
     <tr>
       <td>5.2 Implementing an MLP classifier</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/4_2_MLP.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/4_2_MLP.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/05-MLPs/4_2_MLP.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/5_2_MLP.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/5_2_MLP.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/05-MLPs/5_2_MLP.ipynb">download</a></td>
     </tr>
     <tr>
       <td>5.3 Training and evaluating an MLP classifier with Torchbearer</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/4_3_Torchbearer.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/4_3_Torchbearer.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/05-MLPs/4_3_Torchbearer.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/5_3_Torchbearer.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/5_3_Torchbearer.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/05-MLPs/5_3_Torchbearer.ipynb">download</a></td>
     </tr>
     <tr>
       <td>5.4 Using GPU acceleration with PyTorch</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/4_4_GPU.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/4_4_GPU.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/05-MLPs/4_4_GPU.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/5_4_GPU.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/05-MLPs/5_4_GPU.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/05-MLPs/5_4_GPU.ipynb">download</a></td>
     </tr>
   </tbody>
 </table>

@@ -42,9 +42,9 @@ There is only a single (long) notebook this week to simplify the use of external
   <tbody>
     <tr>
       <td>7.1 Transfer Learning and Fine Tuning</td>
-      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/07-transfer-learning/6_1_TransferLearning.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
-      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/07-transfer-learning/6_1_TransferLearning.ipynb">preview</a></td>
-      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/07-transfer-learning/6_1_TransferLearning.ipynb">download</a></td>
+      <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/07-transfer-learning/7_1_TransferLearning.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
+      <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/07-transfer-learning/7_1_TransferLearning.ipynb">preview</a></td>
+      <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/07-transfer-learning/7_1_TransferLearning.ipynb">download</a></td>
     </tr>
   </tbody>
 </table>

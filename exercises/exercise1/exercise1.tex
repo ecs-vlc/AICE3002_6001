@@ -1,0 +1,103 @@
+\documentclass[a4paper]{article}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm,marginparwidth=2cm]{geometry}
+\usepackage{lmodern}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{textpos}
+\usepackage{tcolorbox}
+\usepackage{pgf,tikz}
+\usetikzlibrary{arrows,automata}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.3em}
+\lstset{language=Python,upquote=true,basicstyle=\ttfamily\small,breaklines=true}
+
+\begin{document}
+\title{{\small AICE3002/AICE6001 Laboratory Exercise Portfolio}\\Investigation 1 -- Gradients and Matrix Completion}
+\author{Jonathon Hare \& Antonia Marcu\\\{j.s.hare, a.marcu\}@soton.ac.uk}
+\date{2026--27}
+\maketitle
+
+This is the first of four \textbf{individual} experimental investigations that make up the laboratory portfolio. It should be completed after the automatic differentiation and optimisation practicals. 
+
+You should write up your results, answers, and findings succinctly, using \emph{no more than two sides of A4} for this investigation. Code need not be reproduced in full: include only short snippets needed to explain your method. This exercise is worth 10 marks (10\% of the module).
+
+\section{Low-rank factorisation with automatic differentiation}
+
+Consider the optimisation problem
+\begin{equation}
+    \min_{\hat{\bm U},\hat{\bm V}}
+    \frac{1}{2}\left\lVert \bm A-\hat{\bm U}\hat{\bm V}^{\top}\right\rVert_{\mathrm F}^{2},
+\end{equation}
+where $\bm A\in\mathbb{R}^{m\times n}$, $\hat{\bm U}\in\mathbb{R}^{m\times r}$, $\hat{\bm V}\in\mathbb{R}^{n\times r}$, and $r<\min(m,n)$. Use
+\begin{equation*}
+\bm A=
+\begin{bmatrix}
+0.3374 & 0.6005 & 0.1735\\
+3.3359 & 0.0492 & 1.8374\\
+2.9407 & 0.5301 & 2.2620
+\end{bmatrix}.
+\end{equation*}
+
+Set the PyTorch random seed to zero in all experiments unless instructed otherwise.
+
+\begin{tcolorbox}[parbox=false,title=1.1 Implement an autograd factorisation (2 marks)]
+Implement a function that initialises $\hat{\bm U}$ and $\hat{\bm V}$ with uniform random values and minimises the objective using PyTorch automatic differentiation and gradient descent. Implement the gradient descent yourself, rather than using a PyTorch optimizer. Your function should return both factors and a record of the loss. Use rank 2 and state the learning rate and number of iterations used.
+
+Note that this is \emph{not} intended to be the stochastic/streaming implementation discussed in the lecture, which visits one observed matrix element at a time. At each iteration you should compute the objective using the whole matrix $\bm A$, then jointly optimise all the entries of $\hat{\bm U}$ and $\hat{\bm V}$.
+
+Report the final reconstruction and loss. Include the part of your training loop that clears gradients, computes the loss, runs reverse-mode differentiation, and updates the factors .
+\end{tcolorbox}
+
+\section{Derivative products and gradient checking}
+
+Define
+\begin{equation*}
+    f(\bm U,\bm V)=\bm U\bm V^{\top}
+\end{equation*}
+and let
+\begin{equation*}
+    \mathcal{L}(\bm U,\bm V)=\frac{1}{2}\left\lVert f(\bm U,\bm V)-\bm A\right\rVert_{\mathrm F}^{2}.
+\end{equation*}
+For this section use double precision and set the PyTorch random seed to zero. Generate the ``direction'' tensors with \texttt{dU = torch.randn\_like(U)} and \texttt{dV = torch.randn\_like(V)}. Thus each entry is drawn independently from the standard normal distribution and each tensor matches its input's shape, data type, and device. Treat $(\dot{\bm U},\dot{\bm V})$ as one direction in the joint input space; you do not need to normalise it.
+
+\begin{tcolorbox}[parbox=false,title={2.1 Check JVPs, VJPs, and backward (3 marks)}]
+Use \texttt{torch.func.jvp} to compute the change in $f$ in the direction $(\dot{\bm U},\dot{\bm V})$. Compare it with a symmetric finite-difference approximation and report the maximum absolute difference for at least three suitably chosen step sizes.
+
+Next use \texttt{torch.func.vjp} with the cotangent $f(\bm U,\bm V)-\bm A$. Compare the resulting tensors with the gradients produced by calling \texttt{backward()} on $\mathcal{L}$. Report an appropriate numerical measure of agreement.
+
+Briefly explain what the tangent, cotangent, JVP, and two returned VJP tensors represent in this example, including their shapes.
+\end{tcolorbox}
+
+\section{Comparison with SVD}
+
+\begin{tcolorbox}[parbox=false,title=3.1 Compare with a truncated SVD (2 marks)]
+Use \texttt{torch.linalg.svd} to construct the best rank-2 reconstruction of $\bm A$. Report its reconstruction loss and compare it with the result from Task 1.1. Explain the difference, including why optimising the factorisation does not necessarily reproduce the same factors even when it reaches the same reconstruction.
+\end{tcolorbox}
+
+\section{Matrix completion}
+
+Let
+\begin{equation*}
+\bm M=
+\begin{bmatrix}
+1&1&1\\
+0&1&1\\
+1&0&1
+\end{bmatrix}
+\end{equation*}
+be a binary observation mask. Entries for which $M_{ij}=0$ are to be treated as unobserved and must not contribute to the loss.
+
+\begin{tcolorbox}[parbox=false,title=4.1 Complete a partially observed matrix (2 marks)]
+Adapt your method from Task 1.1 to optimise only the observed entries of $\bm A$. Report the reconstructed matrix, the loss on observed entries, and the estimates for the two held-out entries. Comment briefly on what this small example does and does not demonstrate about matrix completion.
+\end{tcolorbox}
+
+\begin{tcolorbox}[parbox=false,title=4.2 Predict a movie rating (1 mark)]
+The supplied \texttt{ratings.pt} tensor contains ratings of 1,000 films by 10,000 Netflix users. Rows correspond to films, columns correspond to users, and a zero represents a missing rating. The supplied \texttt{titles.csv} file maps row indices to film titles.
+
+Use your jointly optimised masked factorisation with rank 5, 1,000 iterations, and a learning rate of $10^{-5}$. What rating do you predict that the fifth user (column index 4) would give to ``A Beautiful Mind''? Also report the sum of squared errors over the observed entries of the ratings matrix.
+\end{tcolorbox}
+
+\end{document}

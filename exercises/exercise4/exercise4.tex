@@ -1,0 +1,67 @@
+\documentclass[a4paper]{article}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm,marginparwidth=2cm]{geometry}
+\usepackage{lmodern}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{textpos}
+\usepackage{tcolorbox}
+\usepackage{pgf,tikz}
+\usetikzlibrary{arrows,automata}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.3em}
+\lstset{language=Python,upquote=true,basicstyle=\ttfamily\small,breaklines=true}
+
+\begin{document}
+\title{AICE3002/AICE6001 Laboratory Portfolio\\Investigation 4 -- Transforming Sequences\\\small{- .-. .- -. ... ..-. --- .-. -- .. -. --. / ... . --.- ..- . -. -.-. . ...}}
+\author{Jonathon Hare \& Antonia Marcu\\\{j.s.hare, a.marcu\}@soton.ac.uk}
+\date{2026--27}
+\maketitle
+
+This is the final individual investigation in the laboratory portfolio. It should be completed after the recurrent-network, attention, and transformer practical work. You should write up your results, answers, and findings succinctly, and submit your executable notebook alongside the report.
+
+You should use \emph{no more than two sides of A4} for this investigation. Code need not be reproduced in full: include only short snippets needed to explain your method. This investigation is worth 10 marks.
+
+\section{A recurrent sequence-to-sequence model}
+
+The supplied dataset contains pairs of Morse-code and alphabetic sequences. The symbols \verb|^| and \verb|$| mark the start and end of a sequence, while \verb|_| is used for padding. Training examples contain short fragments; the target is presented in reverse order to the recurrent decoder.
+
+The supplied notebook defines an LSTM encoder--decoder model. Most of the implementation is complete, but the \texttt{forward} method of the \texttt{Encoder} has been omitted. The encoder should embed the input, pass it through its LSTM, and return the final hidden and cell states. Its sequence of LSTM outputs is not used by this model.
+
+\begin{tcolorbox}[title=1.1 Complete and train the recurrent model (3 marks)]
+Complete the encoder and train the model. Include the short code snippet you added, plot the training and validation loss curves, and report the final losses. Briefly explain the shapes and roles of the hidden and cell states passed from encoder to decoder.
+\end{tcolorbox}
+
+\begin{tcolorbox}[parbox=false,title=1.2 Evaluate and use the model (2 marks)]
+Evaluate the trained model on the supplied held-out set using both token accuracy and exact-sequence accuracy. Explain why these measures can give different impressions of performance.
+
+Then use the model to \texttt{.- -. ... .-- . .-. / - .... . / ..-. --- .-.. .-.. --- .-- .. -. --.}:
+\begin{itemize}
+    \item \texttt{.-- .... -.-- / .. ... / - .... . / --- .-. -.. . .-. / --- ..-. / - .... . / --- ..- - .--. ..- - / .-. . ...- . .-. ... . -..}
+    \item \texttt{.-- .... .- - / .. ... / - .... . / .--. --- .. -. - / --- ..-. / - . .- -.-. .... . .-. / ..-. --- .-. -.-. .. -. --.}
+\end{itemize}
+\end{tcolorbox}
+
+\section{Generalisation beyond the training lengths}
+
+The examples used for training contain only a limited range of sequence lengths. A model can perform well on a random held-out subset of these examples without learning an algorithm that generalises to substantially longer sequences.
+
+\begin{tcolorbox}[parbox=false,title=2.1 Test length generalisation (3 marks)]
+Construct evaluation sets grouped by input length, including at least two lengths beyond those used during training. Plot token accuracy and exact-sequence accuracy against input length. Include representative successful and unsuccessful decoded sequences.
+
+Explain the behaviour you observe. Your answer should distinguish exposure to particular text fragments from exposure to particular sequence lengths, and should discuss how errors made early by an autoregressive decoder can affect later outputs.
+\end{tcolorbox}
+
+\section{Attention and padding masks}
+
+The attention lab notebook introduced padding masks so that padded positions do not participate as if they were real tokens. The supplied attention-based sequence model can be run either with its correct padding mask or with masking disabled.
+
+\begin{tcolorbox}[parbox=false,title=3.1 Investigate the effect of masking (2 marks)]
+Evaluate the supplied attention-based model with the correct padding mask and with masking disabled. Use batches containing substantially different sequence lengths. Report an appropriate quantitative comparison and one concrete example where padding changes an output or intermediate representation.
+
+Explain why the effect depends on the amount of padding in a batch, and why an apparently small implementation detail can create a systematic modelling error.
+\end{tcolorbox}
+
+\end{document}
