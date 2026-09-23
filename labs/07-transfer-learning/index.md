@@ -23,14 +23,14 @@ This lab started out its life as a Keras practical developed for the VLC group b
 This version is refocussed on using PyTorch with Torchbearer. A number of changes have been made to ensure that it better fits our format and I've also added additional information and exercises throughout. 
 
 ## Introduction
-Now we've seen how we can use PyTorch to work towards the solution of a handwriting recognition problem, we'll turn our focus to data that is more realistic, using deep-learning models that are much closer to state of the art. The problem with using better models is that we need massive amounts of labelled data to train these models from scratch, and also large amounts of time (typically days of training, even using multiple GPUs). Rather than training from scratch we'll explore using transfer learning and fine-tuning using pre-trained models. The pre-trained models that we'll play with were trained using the ImageNet dataset, which consists of about 1.3 million images in 1000 classes.
+Now we've seen how we can use PyTorch to work towards the solution of a handwriting recognition problem, we'll turn our focus to data that is more realistic, using deep-learning models that are much closer to state of the art. The problem with using better models is that we need massive amounts of labelled data to train these models from scratch, and also large amounts of time (typically days of training, even using multiple GPUs). Rather than training from scratch we'll explore transfer learning by using a pretrained model as a fixed feature extractor and training a new classification head. The pre-trained models that we'll play with were trained using the ImageNet dataset, which consists of about 1.3 million images in 1000 classes.
 
 Through this lab you'll learn how to:
 
 * Load image data from the file system
 * Develop and evaluate a simple CNN for classification.
 * Load a pre-trained model and use it to make classifications.
-* Modify and fine-tune a pre-trained model to solve a classification problem.
+* Use a pretrained model as a fixed feature extractor and train a new classification head.
 * Extract _semantic_ features that can be used for transfer learning and finding similar features.
 
 ## Getting started
@@ -41,7 +41,7 @@ There is only a single (long) notebook this week to simplify the use of external
 <table style="width: 100%">
   <tbody>
     <tr>
-      <td>7.1 Transfer Learning and Fine Tuning</td>
+      <td>7.1 Transfer Learning and Feature Extraction</td>
       <td><a href="https://colab.research.google.com/github/ecs-vlc/AICE3002_6001/blob/main/labs/07-transfer-learning/7_1_TransferLearning.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></td>
       <td><a href="https://github.com/ecs-vlc/AICE3002_6001/blob/main/labs/07-transfer-learning/7_1_TransferLearning.ipynb">preview</a></td>
       <td><a href="https://raw.githubusercontent.com/ecs-vlc/AICE3002_6001/main/labs/07-transfer-learning/7_1_TransferLearning.ipynb">download</a></td>
