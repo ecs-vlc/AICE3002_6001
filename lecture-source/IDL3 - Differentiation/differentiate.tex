@@ -96,10 +96,12 @@
 \begin{itemize}
 	\item<+-> Fundamentally, we're interested in machines that we train by optimising parameters
 	\begin{itemize}
-		\item<+-> How do we select those parameters?
+		\item How do we select those parameters?
 	\end{itemize}
 	\item<+-> In deep learning/differentiable programming we typically define an objective function that we \emph{minimise} (or \emph{maximise}) with respect to those parameters
-	\item<+-> This implies that we're looking for points at which the gradient of the objective function is zero w.r.t the parameters
+	\begin{itemize}
+		\item This implies that we're looking for points at which the gradient of the objective function is zero w.r.t the parameters
+	\end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -453,7 +455,7 @@ $\frac{\partial \mathcal{L}}{\partial W_{uv}} = \sum_{i,j}\frac{\partial \mathca
 	\begin{align*}
 		f(\bm x+\Delta\bm x)\approx f(\bm x)+J_f(\bm x)\Delta\bm x.
 	\end{align*}
-	\item<+-> So, the Jacobian tells us how a small input perturbation produces a small output perturbation.
+	\item<+-> So, the Jacobian tells us the first-order output change produced by a small input perturbation.
 \end{itemize}
 \end{frame}
 
@@ -542,10 +544,6 @@ $\frac{\partial \mathcal{L}}{\partial W_{uv}} = \sum_{i,j}\frac{\partial \mathca
 		J_h(\bm x)^\top\bm u
 		=J_f(\bm x)^\top\bigl(J_g(f(\bm x))^\top\bm u\bigr).
 	\end{align*}
-	\item<+-> For a scalar loss, the final sensitivity is simply $1$.
-	\begin{itemize}
-		\item<+-> Backpropagation (in the coming lectures) is a sequence of VJPs, starting at the loss and working backwards through the computation.
-	\end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -553,13 +551,13 @@ $\frac{\partial \mathcal{L}}{\partial W_{uv}} = \sum_{i,j}\frac{\partial \mathca
 \frametitle{JVPs and VJPs}
 \framesubtitle{What about matrices and higher-order tensors?}
 \begin{itemize}
-	\item<+-> Conceptually, we could flatten every tensor into a vector, construct the corresponding Jacobian, perform the product and reshape the result.
-	\item<+-> In practice, we preserve the natural tensor shapes and directly compute the required product.
+	\item Conceptually, we could flatten every tensor into a vector, construct the corresponding Jacobian, perform the product and reshape the result.
+	\item In practice, we preserve the natural tensor shapes and directly compute the required product.
 	\begin{itemize}
-		\item<+-> We avoid explicitly constructing a potentially enormous Jacobian.
-		\item<+-> The result has the natural shape of the input for a VJP, or the output for a JVP.
+		\item We avoid explicitly constructing a potentially enormous Jacobian.
+		\item The result has the natural shape of the input for a VJP, or the output for a JVP.
 	\end{itemize}
-	\item<+-> Later, we'll see how forward- and reverse-mode automatic differentiation compute these products through an arbitrary program.
+	\item<+-> Next week, we'll see how forward- and reverse-mode automatic differentiation compute these products through an arbitrary program.
 \end{itemize}
 \end{frame}
 
