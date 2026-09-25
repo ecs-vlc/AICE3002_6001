@@ -97,6 +97,8 @@ Adapt your method from Task 1.1 to optimise only the observed entries of $\bm A$
 \begin{tcolorbox}[parbox=false,title=4.2 Predict a movie rating (1 mark)]
 The supplied \texttt{ratings.pt} tensor contains ratings of 1,000 films by 10,000 Netflix users. Rows correspond to films, columns correspond to users, and a zero represents a missing rating. The supplied \texttt{titles.csv} file maps row indices to film titles.
 
+For this task, factorise the raw ratings as supplied: do not mean-centre the ratings, add user or film bias terms, or add regularisation. These are useful extensions in a practical recommender system, but each would change the optimisation problem and the expected numerical result here.
+
 Use your jointly optimised masked factorisation with rank 5, 1,000 iterations, and a learning rate of $10^{-5}$. What rating do you predict that the fifth user (column index 4) would give to ``A Beautiful Mind''? Also report the sum of squared errors over the observed entries of the ratings matrix.
 \end{tcolorbox}
 

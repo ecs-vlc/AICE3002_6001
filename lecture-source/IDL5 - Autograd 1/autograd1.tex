@@ -148,7 +148,7 @@ There are three ways to compute derivatives:
 		\end{equation*}
 	\end{block}
 
-	\uncover<3->{This is a \textbf{one-sided finite difference}: it replaces a limit with two function evaluations at nearby points.}
+	\uncover<2->{This is a \textbf{one-sided finite difference}: it replaces a limit with two function evaluations at nearby points.}
 \end{frame}
 
 
@@ -164,8 +164,8 @@ There are three ways to compute derivatives:
 
 	\begin{itemize}
 		\item<3-> The first neglected term is proportional to $h$.
-		\item<4-> We therefore say that the one-sided approximation has \textbf{truncation error} $O(h)$.
-		\item<5-> Making $h$ smaller initially makes the estimate better.
+		\item<3-> We therefore say that the one-sided approximation has \textbf{truncation error} $O(h)$.
+		\item<4-> Making $h$ smaller initially makes the estimate better.
 	\end{itemize}
 \end{frame}
 
@@ -227,13 +227,13 @@ There are three ways to compute derivatives:
 	A floating point number has a finite number of bits for its sign, significand and exponent.
 
 	\begin{itemize}
-		\item<2-> Only a finite, non-uniformly spaced set of real numbers can be represented.
-		\item<3-> The gap between adjacent representable values grows with the magnitude of the number.
-		\item<4-> If $h$ is too small, the rounded value of $x+h$ can be exactly $x$.
-		\item<5-> Even before that happens, subtracting the nearby values $f(x+h)$ and $f(x)$ discards shared leading digits: \textbf{catastrophic cancellation}.
+		\item Only a finite, non-uniformly spaced set of real numbers can be represented.
+		\item The gap between adjacent representable values grows with the magnitude of the number.
+		\item If $h$ is too small, the rounded value of $x+h$ can be exactly $x$.
+		\item Even before that happens, subtracting the nearby values $f(x+h)$ and $f(x)$ discards shared leading digits: \textbf{catastrophic cancellation}.
 	\end{itemize}
 
-	\begin{block}{The consequence}<6->
+	\begin{block}{The consequence}<+->
 		The numerator becomes dominated by rounding noise just as we try to make the mathematical approximation more accurate.
 	\end{block}
 \end{frame}
@@ -275,13 +275,13 @@ There are three ways to compute derivatives:
 	Let $\mathcal{L}:\mathbb{R}^p\rightarrow\mathbb{R}$ be a loss with $p$ parameters.
 
 	\begin{itemize}
-		\item<2-> A one-sided numerical gradient needs $p+1$ evaluations of $\mathcal{L}$.
-		\item<3-> A symmetric numerical gradient needs $2p$ evaluations.
-		\item<4-> A model with millions of parameters would therefore need millions of forward passes for \emph{one} gradient step.
-		\item<5-> The estimates also contain truncation and roundoff error.
+		\item A one-sided numerical gradient needs $p+1$ evaluations of $\mathcal{L}$.
+		\item A symmetric numerical gradient needs $2p$ evaluations.
+		\item A model with millions of parameters would therefore need millions of forward passes for \emph{one} gradient step.
+		\item The estimates also contain truncation and roundoff error.
 	\end{itemize}
 
-	\begin{alertblock}{So why learn this?}<6->
+	\begin{alertblock}{So why learn this?}<+->
 		A slow, independent approximation is extremely useful for checking whether a fast derivative implementation is correct.
 	\end{alertblock}
 \end{frame}

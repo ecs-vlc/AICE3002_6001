@@ -140,12 +140,12 @@
 \begin{columns}
 \begin{column}{0.65\textwidth}
 \begin{itemize}
-	\item<+-> Recall that the gradient of a straight line is $\frac{\Delta y}{\Delta x}$.
-	\item<+-> For an arbitrary real-valued function, $f(a)$, we can approximate the derivative, $f'(a)$ using the gradient of the \emph{secant line} defined by $(a,f(a))$ and a point a small distance, $h$, away $(a+h,f(a+h))$: $f'(a) \approx \frac{f(a+h) - f(a)}{h}$.
+	\item Recall that the gradient of a straight line is $\frac{\Delta y}{\Delta x}$.
+	\item For an arbitrary real-valued function, $f(a)$, we can approximate the derivative, $f'(a)$ using the gradient of the \emph{secant line} defined by $(a,f(a))$ and a point a small distance, $h$, away $(a+h,f(a+h))$: $f'(a) \approx \frac{f(a+h) - f(a)}{h}$.
 	\begin{itemize}
-		\item<+-> This expression is `Newton's Quotient' or `Fermat's Difference Quotient'.
-		\item<+-> As $h$ becomes smaller, the approximated derivative becomes more accurate. 
-		\item<+-> If we take the limit as $h \to 0$, then we have an exact expression for the derivative: $\frac{df}{da} = f'(a) = \lim_{h\to0} \frac{f(a+h) - f(a)}{h}$.
+		\item This expression is `Newton's Quotient' or `Fermat's Difference Quotient'.
+		\item As $h$ becomes smaller, the approximated derivative becomes more accurate. 
+		\item If we take the limit as $h \to 0$, then we have an exact expression for the derivative: $\frac{df}{da} = f'(a) = \lim_{h\to0} \frac{f(a+h) - f(a)}{h}$.
 	\end{itemize}
 \end{itemize}
 \end{column}
@@ -177,12 +177,12 @@
 \frametitle{Recap: what are gradients and how do we find them?}
 \framesubtitle{The derivative of $y=x^2$ from first principles}
 \begin{align*}
-    \onslide<+->{y &= x^2 \\}
-    \onslide<+->{\frac{dy}{dx} &= \lim_{h\to0} \frac{(x+h)^2 - x^2}{h} \\}
-    \onslide<+->{\frac{dy}{dx} &= \lim_{h\to0} \frac{x^2 + h^2 + 2hx - x^2}{h} \\}
-    \onslide<+->{\frac{dy}{dx} &= \lim_{h\to0} \frac{h^2 + 2hx}{h} \\}
-    \onslide<+->{\frac{dy}{dx} &= \lim_{h\to0} (h + 2x) \\}
-    \onslide<+->{\frac{dy}{dx} &= 2x}
+    \onslide{y &= x^2 \\}
+    \onslide{\frac{dy}{dx} &= \lim_{h\to0} \frac{(x+h)^2 - x^2}{h} \\}
+    \onslide{\frac{dy}{dx} &= \lim_{h\to0} \frac{x^2 + h^2 + 2hx - x^2}{h} \\}
+    \onslide{\frac{dy}{dx} &= \lim_{h\to0} \frac{h^2 + 2hx}{h} \\}
+    \onslide{\frac{dy}{dx} &= \lim_{h\to0} (h + 2x) \\}
+    \onslide{\frac{dy}{dx} &= 2x}
 \end{align*}
 \end{frame}
 

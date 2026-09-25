@@ -34,6 +34,7 @@
 \lstset{basicstyle=\small\ttfamily,breaklines=true}
 
 \title[Matrix Completion]{Differentiable Matrix Completion}
+\subtitle{and a million-dollar prediction problem}
 \author{Jonathon Hare}
 \institute[]
 {
@@ -119,7 +120,7 @@ For real $\bm A:$ \\
 			\item for real $\bm A$: $\bm A^+ = \bm V \bm\Sigma^+ \bm U^\top$ where $\bm\Sigma^+$ is formed by taking the reciprocal of every non-zero diagonal element and transposing the result.
 		\end{itemize}}
 		\uncover<+->{
-		\item<+-> Low-rank approximation and matrix completion
+		\item<+-> Low-rank approximation
 		\begin{itemize}
 			\item if you take the $\rho$ columns of $\bm U$, and the $\rho$ rows of $\bm V^\top$ corresponding to the $\rho$ largest singular values, you can form the matrix $\bm A_\rho = \bm U_\rho \bm \Sigma_\rho \bm V^\top_\rho$ which will be the $best$ rank-$\rho$ approximation of the original $\bm A$ in terms of the Frobenius norm.
 		\end{itemize}}
@@ -136,16 +137,16 @@ For real $\bm A:$ \\
 	\begin{itemize}
 		\item<+-> $100{,}480{,}507$ ratings;
 		\item<+-> from $480{,}189$ customers;
-		\item<+-> for $17{,}770$ films.
+		\item<+-> for $17{,}770$ movies.
 	\end{itemize}
-	\item<+-> Given a customer, a film and everything that customer had rated previously: \textbf{what rating would they give the film?}
+	\item<+-> Given a customer, a movie and everything that customer had rated previously: \textbf{what rating would they give the movie?}
 \end{itemize}
 \blfootnote{\tiny Simon Funk, \href{https://sifter.org/~simon/journal/20061211.html}{Netflix Update: Try This at Home}, 2006.}
 \end{frame}
 
 \begin{frame}
 \frametitle{The Netflix Challenge}
-\framesubtitle{The user--film rating matrix}
+\framesubtitle{The user--movie rating matrix}
 \begin{columns}
 \begin{column}{0.58\textwidth}
 \centering
@@ -161,10 +162,10 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 \end{column}
 \begin{column}{0.42\textwidth}
 \begin{itemize}
-	\item<+-> Rows represent users.
-	\item<+-> Columns represent films.
-	\item<+-> Entries are ratings from 1 to 5.
-	\item<+-> A dot is \emph{unobserved}; it is not a rating of zero.
+	\item Rows represent users.
+	\item Columns represent movies.
+	\item<2-> Entries are ratings from 1 to 5.
+	\item<3-> A dot is \emph{unobserved}; it is not a rating of zero.
 \end{itemize}
 \end{column}
 \end{columns}
@@ -176,7 +177,7 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 \frametitle{The Netflix Challenge}
 \framesubtitle{Why might a low-rank model work?}
 \begin{itemize}
-	\item<+-> Films are not completely unrelated objects.
+	\item<+-> Movies are not completely unrelated objects.
 	\begin{itemize}
 		\item<+-> They have properties such as genre, style, cast, age and overall popularity.
 	\end{itemize}
@@ -184,9 +185,9 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 	\begin{itemize}
 		\item<+-> They have different preferences for those properties, as well as different tendencies in how they use the rating scale.
 	\end{itemize}
-	\item<+-> Perhaps both films and users can be represented using a relatively small number of \emph{latent factors}.
+	\item<+-> Perhaps both movies and users can be represented using a relatively small number of \emph{latent factors}.
 	\begin{itemize}
-		\item<+-> The factors are learned from the ratings; we do not tell the model that one of them should mean ``likes action films''.
+		\item<+-> The factors are learned from the ratings; we do not tell the model that one of them should mean ``likes action movies''.
 	\end{itemize}
 \end{itemize}
 \end{frame}
@@ -200,10 +201,10 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 	\item<+-> Instead, construct two smaller matrices:
 	\begin{align*}
 		\bm P&\in\mathbb{R}^{n_{\rm users}\times k}, &
-		\bm Q&\in\mathbb{R}^{n_{\rm films}\times k},
+		\bm Q&\in\mathbb{R}^{n_{\rm movies}\times k},
 	\end{align*}
 	where $k$ is the number of latent factors.
-	\item<+-> The predicted rating is the dot product of a user's factors and a film's factors:
+	\item<+-> The predicted rating is the dot product of a user's factors and a movies's factors:
 	\begin{align*}
 		\hat r_{ui}=\bm p_u^\top\bm q_i.
 	\end{align*}
@@ -214,15 +215,14 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 \frametitle{Learning a low-rank model from observed ratings}
 \framesubtitle{Only score the ratings that we actually observed}
 \begin{itemize}
-	\item<+-> Let $\Omega$ be the set of user--film pairs for which Netflix supplied a rating.
+	\item<+-> Let $\Omega$ be the set of user--movies pairs for which Netflix supplied a rating.
 	\item<+-> We can learn $\bm P$ and $\bm Q$ by minimising:
 	\begin{align*}
 		\mathcal{L}(\bm P,\bm Q)
-		&=\sum_{(u,i)\in\Omega}\Bigl[
-		\left(r_{ui}-\bm p_u^\top\bm q_i\right)^2 \\
-		&\qquad+\lambda\left(\lVert\bm p_u\rVert^2+\lVert\bm q_i\rVert^2\right)\Bigr].
+		&=\sum_{(u,i)\in\Omega}
+		\left(r_{ui}-\bm p_u^\top\bm q_i\right)^2.
 	\end{align*}
-	\item<+-> This is usually called \emph{matrix factorisation} rather than SVD:
+	\item<+-> This is more generally called \emph{matrix factorisation} rather than SVD:
 	\begin{itemize}
 		\item<+-> there are no orthogonality constraints or explicit singular values;
 		\item<+-> and the loss is evaluated only over $\Omega$.
@@ -239,9 +239,9 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 	\begin{align*}
 		e_{ui}=r_{ui}-\bm p_u^\top\bm q_i.
 	\end{align*}
-	\item<+-> Its regularised loss is:
+	\item<+-> Its squared-error loss is:
 	\begin{align*}
-		\ell_{ui}=e_{ui}^2+\lambda\left(\lVert\bm p_u\rVert^2+\lVert\bm q_i\rVert^2\right).
+		\ell_{ui}=e_{ui}^2.
 	\end{align*}
 	\item<+-> What are $\frac{\partial\ell_{ui}}{\partial\bm p_u}$ and $\frac{\partial\ell_{ui}}{\partial\bm q_i}$?
 	\begin{itemize}
@@ -258,23 +258,25 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 	\uncover<+->{\frac{\partial e_{ui}}{\partial\bm p_u}&=-\bm q_i,
 	&\frac{\partial e_{ui}}{\partial\bm q_i}&=-\bm p_u \\[0.75em]}
 	\uncover<+->{\frac{\partial\ell_{ui}}{\partial\bm p_u}
-	&=-2e_{ui}\bm q_i+2\lambda\bm p_u,
+	&=-2e_{ui}\bm q_i,
 	&\frac{\partial\ell_{ui}}{\partial\bm q_i}
-	&=-2e_{ui}\bm p_u+2\lambda\bm q_i.}
-\end{align*}
+	&=-2e_{ui}\bm p_u.}
+	\end{align*}
 
 \uncover<+->{Absorbing the factor of two into the learning rate, stochastic gradient descent gives:}
+\uncover<+->{
 \begin{align*}
-	\uncover<+->{\bm p_u&\Leftarrow\bm p_u+\eta(e_{ui}\bm q_i-\lambda\bm p_u), \\}
-	\uncover<+->{\bm q_i&\Leftarrow\bm q_i+\eta(e_{ui}\bm p_u-\lambda\bm q_i).}
+	\bm p_u&\Leftarrow\bm p_u+\eta e_{ui}\bm q_i, \\
+	\bm q_i&\Leftarrow\bm q_i+\eta e_{ui}\bm p_u.
 \end{align*}
+}
 \end{frame}
 
 \begin{frame}
 \frametitle{Learning a low-rank model from observed ratings}
 \framesubtitle{One rating at a time}
 \begin{itemize}
-	\item<+-> Initialise the user and film factors to small values.
+	\item<+-> Initialise the user and movies factors to small values.
 	\item<+-> Repeatedly visit the ratings in $\Omega$:
 	\begin{enumerate}
 		\item<+-> predict $\hat r_{ui}=\bm p_u^\top\bm q_i$;
@@ -293,13 +295,35 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 \frametitle{Learning a low-rank model from observed ratings}
 \framesubtitle{Don't make the latent factors explain the obvious stuff}
 \begin{itemize}
-	\item<+-> Some films are broadly popular, and some users give consistently higher ratings than others.
-	\item<+-> Add a global mean and user and film biases:
+	\item<+-> First centre ratings around the global mean $\mu$, so the factors do not need to learn the overall level of the rating scale.
+	\item<+-> Some movies are broadly popular, and some users give consistently higher ratings than others.
+	\item<+-> Add a global mean and user and movie biases:
 	\begin{align*}
 		\hat r_{ui}=\mu+b_u+b_i+\bm p_u^\top\bm q_i.
 	\end{align*}
-	\item<+-> The latent factors can then focus on interactions between particular kinds of users and films.
-	\item<+-> Regularisation is especially important for users and films with very few ratings.
+	\item<+-> The latent factors can then focus on interactions between particular kinds of users and movies.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Learning a low-rank model from observed ratings}
+\framesubtitle{Regularisation is a separate modelling choice}
+\begin{itemize}
+	\item<+-> Mean-centering and bias terms capture systematic baseline effects; regularisation addresses a different problem.
+	\item<+-> For one observed rating, we can penalise large factor vectors:
+	\begin{align*}
+		e_{ui}&=r_{ui}-\left(\mu+b_u+b_i+\bm p_u^\top\bm q_i\right),\\
+		\ell_{ui}^{\rm reg}&=e_{ui}^2+\lambda\left(\lVert\bm p_u\rVert^2+\lVert\bm q_i\rVert^2\right).
+	\end{align*}
+	\item<+-> The corresponding factor updates gain a shrinkage term:
+	\begin{align*}
+		\bm p_u&\Leftarrow\bm p_u+\eta(e_{ui}\bm q_i-\lambda\bm p_u), &
+		\bm q_i&\Leftarrow\bm q_i+\eta(e_{ui}\bm p_u-\lambda\bm q_i).
+	\end{align*}
+	\item<+-> Choose $\lambda$ using validation data; regularisation is particularly useful for users and movies with few ratings.
+	\begin{itemize}
+		\item<+-> The bias terms may also be regularised.
+	\end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -327,10 +351,10 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 	\item<+-> Netflix did not publish customer names or contact details.
 	\item<+-> Each released record did, however, contain:
 	\begin{itemize}
-		\item<+-> a pseudonymous customer identifier;
-		\item<+-> the film that they rated;
-		\item<+-> the rating;
-		\item<+-> and the date on which they rated it.
+		\item a pseudonymous customer identifier;
+		\item the movie that they rated;
+		\item the rating;
+		\item and the date on which they rated it.
 	\end{itemize}
 	\item<+-> Is removing a person's name sufficient to make their data anonymous?
 \end{itemize}
@@ -340,11 +364,11 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 \frametitle{The Netflix Challenge}
 \framesubtitle{Sparse behaviour can form a fingerprint}
 \begin{itemize}
-	\item<+-> An individual is unlikely to have rated exactly the same unusual combination of films, on roughly the same dates, as many other people.
+	\item<+-> An individual is unlikely to have rated exactly the same unusual combination of movies, on roughly the same dates, as many other people.
 	\item<+-> Narayanan and Shmatikov showed how a little outside knowledge could be linked to the released Netflix records.
 	\begin{itemize}
-		\item<+-> Public ratings from IMDb supplied examples of that outside knowledge.
-		\item<+-> The matching procedure tolerated approximate ratings, incorrect entries and errors in rating dates.
+		\item Public ratings from IMDb supplied examples of that outside knowledge.
+		\item The matching procedure tolerated approximate ratings, incorrect entries and errors in rating dates.
 	\end{itemize}
 	\item<+-> Once a record was linked to a known person, their other ratings could reveal preferences that they had never made public.
 \end{itemize}
@@ -358,13 +382,13 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 	\item<+-> Whether a dataset is anonymous depends on more than whether obvious identifiers have been removed.
 	\item<+-> We must also ask:
 	\begin{itemize}
-		\item<+-> How distinctive is each person's pattern of behaviour?
-		\item<+-> What auxiliary information might an attacker possess now --- or in the future?
-		\item<+-> Which attributes are actually required for the intended research?
+		\item How distinctive is each person's pattern of behaviour?
+		\item What auxiliary information might an attacker possess now --- or in the future?
+		\item Which attributes are actually required for the intended research?
 	\end{itemize}
 	\item<+-> Could Netflix have reduced the risk by coarsening dates, suppressing rare ratings, aggregating records, or adding noise?
 	\begin{itemize}
-		\item<+-> What would each of these do to the scientific utility of the data?
+		\item What would each of these do to the scientific utility of the data?
 	\end{itemize}
 \end{itemize}
 \end{frame}
@@ -373,9 +397,9 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 \frametitle{The Netflix Challenge}
 \framesubtitle{The two sides of sparsity}
 \begin{itemize}
-	\item<+-> The rating matrix was sparse, so we could train efficiently by updating only the two factor vectors involved in each observed rating.
-	\item<+-> Individual behaviour was also sparse, so a small set of unusual ratings could make a person's record distinctive.
-	\item<+-> The same property that made the learning problem computationally tractable helped create the privacy risk.
+	\item The rating matrix was sparse, so we could train efficiently by updating only the two factor vectors involved in each observed rating.
+	\item Individual behaviour was also sparse, so a small set of unusual ratings could make a person's record distinctive.
+	\item The same property that made the learning problem computationally tractable helped create the privacy risk.
 \end{itemize}
 \end{frame}
 
