@@ -596,14 +596,14 @@ The JVP has an equivalent limit definition:
 	\left.\frac{d}{dt}\bm{f}(\bm{x}+t\bm{v})\right|_{t=0}.
 \end{equation*}
 
-\uncover<2->{We could approximate it numerically:}
+\uncover<1->{Whice we could approximate numerically:}
 \begin{equation*}
 	\uncover<2->{\bm{J}_{\bm{f}}(\bm{x})\bm{v}
 	\approx
 	\frac{\bm{f}(\bm{x}+h\bm{v})-\bm{f}(\bm{x}-h\bm{v})}{2h}.}
 \end{equation*}
 
-\begin{block}{Forward mode does something better}<3->
+\begin{block}{Forward mode does something better}<2->
 	It propagates the same directional derivative through every primitive operation using the chain rule---accurate to floating point precision, with no choice of $h$.
 \end{block}
 \end{frame}
@@ -626,9 +626,9 @@ y, Jv = jvp(f, (x,), (v,))
 \end{lstlisting}
 
 \begin{itemize}
-	\item<2-> \texttt{y} is $\bm{f}(\bm{x})$.
-	\item<3-> \texttt{Jv} is $\bm{J}_{\bm{f}}(\bm{x})\bm{v}$; here it is $[3,\cos(2)]^\top$.
-	\item<4-> Each primal input has a tangent with the same shape.
+	\item \texttt{y} is $\bm{f}(\bm{x})$.
+	\item \texttt{Jv} is $\bm{J}_{\bm{f}}(\bm{x})\bm{v}$; here it is $[3,\cos(2)]^\top$.
+	\item Each primal input has a tangent with the same shape.
 \end{itemize}
 \blfootnote{\url{https://docs.pytorch.org/docs/stable/generated/torch.func.jvp.html}}
 \end{frame}
@@ -648,12 +648,12 @@ with fwAD.dual_level():
 \end{lstlisting}
 
 \begin{itemize}
-	\item<2-> \texttt{make\_dual} pairs the primal $\bm{x}$ with the tangent $\bm{v}$.
-	\item<3-> Ordinary PyTorch operations propagate both components.
-	\item<4-> \texttt{unpack\_dual} separates the output value from its JVP.
+	\item \texttt{make\_dual} pairs the primal $\bm{x}$ with the tangent $\bm{v}$.
+	\item Ordinary PyTorch operations propagate both components.
+	\item \texttt{unpack\_dual} separates the output value from its JVP.
 \end{itemize}
 
-\uncover<5->{For routine JVPs, prefer the higher-level \texttt{torch.func.jvp}; the dual-tensor API is useful when you need finer control.}
+\uncover<+->{For routine JVPs, prefer the higher-level \texttt{torch.func.jvp}; the dual-tensor API is useful when you need finer control.}
 \blfootnote{\url{https://docs.pytorch.org/tutorials/intermediate/forward_ad_usage.html}}
 \end{frame}
 
