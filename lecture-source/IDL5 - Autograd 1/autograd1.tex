@@ -252,7 +252,7 @@ There are three ways to compute derivatives:
 		\end{block}
 
 		\column{.45\textwidth}
-		\begin{block}{64-bit floating point}<2->
+		\begin{block}{64-bit floating point}<1->
 			\begin{itemize}
 				\item about 16 decimal digits
 				\item $\epsilon_{\mathrm{mach}} \approx 2.2\times10^{-16}$
@@ -261,9 +261,9 @@ There are three ways to compute derivatives:
 	\end{columns}
 
 	\begin{itemize}
-		\item<3-> A rough choice for symmetric differences is $h\sim\sqrt[3]{\epsilon_{\mathrm{mach}}}$, although the best value also depends on the scale and curvature of $f$.
-		\item<4-> Single precision leaves very little room between truncation and roundoff error; half precision is worse still.
-		\item<5-> For gradient checking, evaluate both the function and the gradients in \textbf{double precision}.
+		\item<2-> A rough choice for symmetric differences is $h\sim\sqrt[3]{\epsilon_{\mathrm{mach}}}$, although the best value also depends on the scale and curvature of $f$.
+		\item<2-> Single precision leaves very little room between truncation and roundoff error; half precision is worse still.
+		\item<3-> For gradient checking, evaluate both the function and the gradients in \textbf{double precision}.
 	\end{itemize}
 	\blfootnote{PyTorch numerical accuracy notes: \url{https://docs.pytorch.org/docs/stable/notes/numerical_accuracy.html}}
 \end{frame}
@@ -301,7 +301,7 @@ There are three ways to compute derivatives:
 		\begin{itemize}
 			\item Use double precision.
 			\item Make the computation deterministic.
-			\item Avoid non-differentiable test points.
+			% \item Avoid non-differentiable test points.
 			\item Check a few coordinates or directions for very large models.
 		\end{itemize}
 
@@ -344,14 +344,12 @@ There are three ways to compute derivatives:
 \begin{frame}
 	\frametitle{What is Automatic Differentiation (AD)?}
 
-	Automatic Differentiation is:
-	\begin{itemize}
-		\item a method to get exact derivatives efficiently, by storing information as you go forward that you can reuse as you go backwards.
+		Automatic Differentiation:
 		\begin{itemize}
-			\item Takes code that computes a function and uses that to compute the derivative of that function.
-		\item The goal isn't to obtain closed-form solutions, but to be able to write a program that efficiently computes the derivatives.
+			\item applies the chain rule to the primitive operations executed by a program;
+			\item computes derivatives alongside the program, accurate up to floating-point roundoff, rather than producing a closed-form expression;
+			\item propagates tangents with values in forward mode, and adjoints back from outputs in reverse mode.
 		\end{itemize}
-	\end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -596,9 +594,9 @@ The JVP has an equivalent limit definition:
 	\left.\frac{d}{dt}\bm{f}(\bm{x}+t\bm{v})\right|_{t=0}.
 \end{equation*}
 
-\uncover<1->{Whice we could approximate numerically:}
+\uncover<1->{Which we could approximate numerically:}
 \begin{equation*}
-	\uncover<2->{\bm{J}_{\bm{f}}(\bm{x})\bm{v}
+	\uncover<1->{\bm{J}_{\bm{f}}(\bm{x})\bm{v}
 	\approx
 	\frac{\bm{f}(\bm{x}+h\bm{v})-\bm{f}(\bm{x}-h\bm{v})}{2h}.}
 \end{equation*}

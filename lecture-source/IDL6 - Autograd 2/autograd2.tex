@@ -130,17 +130,17 @@ There are three ways to compute derivatives:
 \begin{frame}
 \frametitle{Reversing the Chain Rule}
 
-The chain rule is symmetric --- this means we can turn the derivatives upside-down:
+The same chain rule can be accumulated in the opposite direction: start at an output and propagate sensitivities back towards the inputs:
 \begin{equation*}
 	\frac{\partial s}{\partial u} = \sum_i^N \frac{\partial w_i}{\partial u} \frac{\partial s}{\partial w_i} = \frac{\partial w_1}{\partial u}\frac{\partial s}{\partial w_1} + \frac{\partial w_2}{\partial u}\frac{\partial s}{\partial w_2} + \dots + \frac{\partial w_N}{\partial u}\frac{\partial s}{\partial w_N}
 \end{equation*}
 
 \uncover<2->{
-In doing so, we have inverted the input-output role of the variables: $u$ is some input variable, the $w_i$'s are the output variables that depend on $u$. $s$ is the yet-to-be-given variable.
+Here $u$ is an input to the downstream variables $w_i$, and $s$ is the scalar quantity whose sensitivity we propagate.
 }
 \\[1em]
 \uncover<2->{
-In this form, the chain rule can be applied repeatedly to every input variable $u$ (akin to how in forward mode we repeatedly applied it to every $w$). Therefore, given some $s$ we expect this form of the rule to give us a program to compute both $\partial s/\partial x$ and $\partial s/\partial y$ in one go\ldots
+Applying this rule repeatedly lets one reverse sweep compute both $\partial s/\partial x$ and $\partial s/\partial y$.
 }
 
 \end{frame}
@@ -309,7 +309,7 @@ y = Var(4.2)
 \begin{frame}[fragile]
 	\frametitle{Building expressions}
 
-Each new expression $u$ registers itself as a child of each dependency $w_i$, together with the local derivative $\partial w_i/\partial u$ used during the reverse sweep:
+Each new expression $u$ registers itself as a child of each dependency $w_i$, together with the local derivative $\partial u/\partial w_i$ used during the reverse sweep:
 
 \begin{lstlisting}[language=python]
 class Var:
@@ -347,8 +347,8 @@ class Var:
     return self.grad_value
 	...
 ...
-a.grad_value = 1.0
-print("da/dx = {}".format(x.grad()))
+z.grad_value = 1.0
+print("dz/dx = {}".format(x.grad()))
 \end{lstlisting}
 \end{frame}
 
@@ -367,7 +367,7 @@ print("da/dx = {}".format(x.grad()))
 \begin{itemize}
 	\item<+-> The Reverse AD approach we've outlined is not very space efficient. One way to get around this is to avoid storing the children directly and instead store indices in an auxiliary data structure called a \emph{Wengert list} or \emph{tape}.
 	\item<+-> Another interesting approach to memory reduction is trade-off computation for memory of the caches. The Count-Trailing-Zeros (CTZ) approach does just this\footnote{Andreas Griewank (1992) Achieving logarithmic growth of temporal and spatial complexity in reverse automatic differentiation, Optimization Methods and Software, 1:1, 35-54, DOI: 10.1080/10556789208805505}.
-	\item<+-> \textbf{But,} in reality memory is relatively cheap if managed well...
+	\item<+-> In deep networks, stored activations can dominate memory use. Checkpointing saves selected intermediates and recomputes others during the reverse sweep, trading computation for memory.
 \end{itemize}
 \end{frame}
 
@@ -375,15 +375,14 @@ print("da/dx = {}".format(x.grad()))
 \frametitle{AD in the PyTorch autograd package}
 
 \begin{itemize}
-	\item<+-> PyTorch's AD is remarkably similar to the one we've just built: \begin{itemize}
-		\item<+-> it eschews the use of a tape
-		\item<+-> it builds the computation graph as it runs (recording explicit \lstinline!Function! objects as the children of \lstinline!Tensors! rather than grouping everything into \lstinline!Var! objects)
-			\item<+-> calling \lstinline!.backward()! runs the reverse sweep and accumulates gradients for leaf tensors in their \lstinline!.grad! attributes---hence the need to call \lstinline!zero_grad()! before the next optimisation step.
+	\item<+-> PyTorch records a dynamic computation graph as tensor operations run; non-leaf tensors link to the \lstinline!Function! that produced them through \lstinline!grad_fn!.
+	\item<+-> Calling \lstinline!.backward()! runs the reverse sweep and accumulates gradients in the \lstinline!.grad! attributes of leaf tensors.
+	\begin{itemize}
+		\item<+-> Gradients therefore need clearing before the next optimisation step.
 	\end{itemize}
-	\item<+-> PyTorch does some clever memory management to work well in a reference-counted regime and aggressively frees values that are no longer needed.
-	\item<+-> The backend is actually mostly written in C++, so its fast, and can be multi-threaded (avoids problems of the GIL).
-	\item<+-> It allows easy ``turning off'' of gradient computations through \lstinline!requires_grad!.
-	\item<+-> In-place operations which invalidate data needed to compute derivatives will cause runtime errors, as will variable aliasing...
+	\item<+-> Saved intermediates are freed after the reverse sweep unless the graph is explicitly retained.
+	\item<+-> Use \lstinline!torch.no_grad()! or \lstinline!torch.inference_mode()! to disable recording when gradients are unnecessary.
+	\item<+-> In-place operations raise an error if they overwrite values required for the reverse sweep.
 \end{itemize}
 \end{frame}
 
@@ -448,7 +447,7 @@ The output cotangent $\bm{v}$ defines a scalar function
 		\end{equation*}
 		\begin{itemize}
 			\item seed an input direction $\bm{u}$
-			\item one sweep per required Jacobian column
+			\item one sweep required per  Jacobian column
 		\end{itemize}
 	\end{block}
 
@@ -459,7 +458,7 @@ The output cotangent $\bm{v}$ defines a scalar function
 		\end{equation*}
 		\begin{itemize}
 			\item seed an output weighting $\bm{v}$
-			\item one sweep per required Jacobian row
+			\item one sweep required per Jacobian row
 		\end{itemize}
 	\end{block}
 \end{columns}

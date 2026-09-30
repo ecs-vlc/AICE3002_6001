@@ -204,7 +204,7 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 		\bm Q&\in\mathbb{R}^{n_{\rm movies}\times k},
 	\end{align*}
 	where $k$ is the number of latent factors.
-	\item<+-> The predicted rating is the dot product of a user's factors and a movies's factors:
+	\item<+-> The predicted rating is the dot product of a user's factors and a movie's factors:
 	\begin{align*}
 		\hat r_{ui}=\bm p_u^\top\bm q_i.
 	\end{align*}
@@ -215,7 +215,7 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 \frametitle{Learning a low-rank model from observed ratings}
 \framesubtitle{Only score the ratings that we actually observed}
 \begin{itemize}
-	\item<+-> Let $\Omega$ be the set of user--movies pairs for which Netflix supplied a rating.
+	\item<+-> Let $\Omega$ be the set of user--movie pairs for which Netflix supplied a rating.
 	\item<+-> We can learn $\bm P$ and $\bm Q$ by minimising:
 	\begin{align*}
 		\mathcal{L}(\bm P,\bm Q)
@@ -276,7 +276,7 @@ $U_5$ & 1 & $\cdot$ & $\cdot$ & 2 & $\cdot$ & 1
 \frametitle{Learning a low-rank model from observed ratings}
 \framesubtitle{One rating at a time}
 \begin{itemize}
-	\item<+-> Initialise the user and movies factors to small values.
+	\item<+-> Initialise the user and movie factors to small values.
 	\item<+-> Repeatedly visit the ratings in $\Omega$:
 	\begin{enumerate}
 		\item<+-> predict $\hat r_{ui}=\bm p_u^\top\bm q_i$;
