@@ -195,7 +195,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]\frametitle{The unbiased Multilayer Perceptron (again)...}
+\begin{frame}[fragile]\frametitle{The bias-term free Multilayer Perceptron}
   \begin{center}
     \begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
         \tikzstyle{every pin edge}=[<-,shorten <=1pt]
@@ -249,7 +249,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Gradients of our simple unbiased MLP}
+  \frametitle{Gradients of our simple bias-term free MLP}
 
 \begin{itemize}
   \item<+-> Let's assume MSE Loss
@@ -262,7 +262,8 @@
     \end{equation*}
   \item<+-> Clearly we need to apply the chain rule (vector form) multiple times
   \item<+-> We could do this by hand
-  \item<+-> (But we're not that crazy!)
+  \item<+-> We're not that crazy! We've already seen how AD reduces this to a problem of computing JVPs (or better VJPs here - the reverse mode)
+  \item<+-> But, what does that mean in terms of an algorithm for computing the gradients?
 \end{itemize}
 \end{frame}
 
@@ -305,7 +306,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{An intuition of the chain rule}
+  \frametitle{An intuition of the chain rule and reverse mode AD}
 
 \begin{itemize}
   \item Notice how every operation in the computational graph given its inputs can immediately compute two things:
