@@ -1,19 +1,23 @@
 \newcommand{\lecturetitle}{Practical Training of Deep Networks}
-\newcommand{\lecturesubtitle}{Initialisation, normalisation, clipping, schedules, and diagnosis}
+\newcommand{\lecturesubtitle}{Normalisation, stabilisation, and diagnosis}
 \newcommand{\covertext}{Make\\training\\work}
 
 \input{../idl-slides-preamble.tex}
 
 \frame{\frametitle{Training is a coupled dynamical system}}
-\frame{\frametitle{Initialisation sets the starting signal scale}}
-\frame{\frametitle{Variance propagation through deep networks}}
-\frame{\frametitle{Normalisation changes optimisation geometry}}
-\frame{\frametitle{Batch normalisation in training and evaluation}}
-\frame{\frametitle{Residual pathways preserve useful signals}}
+\frame{\frametitle{Initialisation recap: Xavier, He, and PyTorch defaults}}
+\frame{\frametitle{Normalisation layers control activation scale}}
+\frame{\frametitle{Batch normalisation}}
+\frame{\frametitle{BatchNorm during training and evaluation}}
+\frame{\frametitle{Batch size and data dependence}}
+\frame{\frametitle{Layer normalisation}}
+\frame{\frametitle{Initialisation and normalisation complement each other}}
 \frame{\frametitle{Gradient clipping limits unstable updates}}
-\frame{\frametitle{Learning-rate schedules control training phases}}
-\frame{\frametitle{Training curves are diagnostic evidence}}
+\frame{\frametitle{Learning-rate schedules and warm-up}}
+\frame{\frametitle{Weight decay connects optimisation and regularisation}}
+\frame{\frametitle{Training curves give diagnostic evidence}}
 \frame{\frametitle{Inspecting activations and gradients}}
+\frame{\frametitle{Dead and saturated units}}
 \frame{\frametitle{A systematic failure-diagnosis workflow}}
 
 \end{document}

@@ -381,7 +381,28 @@ Note $\beta = 0.9$ is a good choice for the momentum parameter.
   \end{itemize}
 \end{itemize}
 
+\begin{center}
+\begin{tikzpicture}
+  \begin{axis}[
+    height=6cm,
+    width=12cm,
+    grid=both,
+    xtick distance=1,
+    ytick distance=1,
+    xticklabels={,,},
+    yticklabels={,,},
+    axis equal,
+    xmin=0,
+    xmax=5,
+    ymin=0,
+    ymax=10 
+  ]
+  \end{axis}
+\end{tikzpicture}
+\end{center}
+
 \end{frame}
+
 %-------------------------------------------------------------%
 \begin{frame}\frametitle{Reduce LR on plateau}
 \begin{itemize}
@@ -448,10 +469,49 @@ Note $\beta = 0.9$ is a good choice for the momentum parameter.
     \item Shown that it might still diverge (or be non optimal, even in convex settings)...
     \item LR is still a hyperparameter (you might still schedule)
   \end{itemize}
+  \item<+-> AdamW
+  \begin{itemize}
+    \item Fixes an Adam implementation issues by decoupling L2 regularisation (weight decay)
+  \end{itemize}
 \end{itemize}
 
 \end{frame}
+
 %-------------------------------------------------------------%
+\begin{frame}\frametitle{Warm-up and Cosine Annealing}
+\begin{itemize}
+  \item One of the most common approaches in recent models
+  \begin{itemize}
+    \item Start small and `warm-up' over a few epochs
+    \item then decay towards zero over the remaining epochs
+  \end{itemize}
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}
+  \begin{axis}[
+    height=6cm,
+    width=12cm,
+    grid=both,
+    xtick distance=1,
+    ytick distance=1,
+    xticklabels={,,},
+    yticklabels={,,},
+    axis equal,
+    xmin=0,
+    xmax=5,
+    ymin=0,
+    ymax=10 
+  ]
+  \end{axis}
+\end{tikzpicture}
+\end{center}
+
+\end{frame}
+
+%-------------------------------------------------------------%
+
+
 
 \begin{frame}\frametitle{Take-away messages}
 

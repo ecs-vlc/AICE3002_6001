@@ -135,8 +135,8 @@
 \hypersetup{pdfstartview={Fit}}
 \lstset{basicstyle=\small\ttfamily,breaklines=true}
 
-\title[Neural Nets]{Basic Neural Networks}
-\subtitle{(and some Deep Network Fundamentals)}
+\title[AICE3002 / AICE6001]{From MLPs to Trainable Models}
+\subtitle{Activations, objectives, and initialisation}
 \author{Jonathon Hare and Antonia Marcu}
 \institute[]
 {
@@ -163,6 +163,7 @@
 }
 
 \DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\argmax}{arg\,max}
 
 \begin{document}
 
@@ -172,7 +173,7 @@
 \begin{frame}[plain]
         \begin{tikzpicture}[overlay, remember picture, shift={(current page.south west)},font={\fontfamily{Montserrat-TOsF}\selectfont}]
         \fill [merrygreen,text=darkblue] (0,0) rectangle (\paperwidth, \paperheight);
-        \draw (4,7) node [align=left,text=almostwhite] {\Huge \begin{tabular}{l} \textbf{Train,} \\ \textbf{Validate,} \\ \textbf{Test} \end{tabular}};
+        \draw (4,7) node [align=left,text=almostwhite] {\Huge \begin{tabular}{l} \textbf{From MLPs} \\ \textbf{to Trainable} \\ \textbf{Models} \end{tabular}};
         \draw (11,1) node [align=left,text=almostwhite] {\includegraphics[scale=0.15]{../vlc.png}};
         \end{tikzpicture}
 \end{frame}
@@ -183,31 +184,48 @@
 \end{frame}
 %%-------------------------------------------------------------%
 
-\begin{frame}[fragile]\frametitle{Classical Types of Learning}
+\begin{frame}{Topics}
 \begin{itemize}
-\item Supervised Learning - learn to predict an output when given an input vector
-
-\item Unsupervised Learning - discover a good internal representation of the input
-
-\item Reinforcement Learning - learn to select an action to maximize the expectation of future rewards (payoff)
-
-\item Semi-supervised Learning - learn with few labelled examples and many unlabelled ones
+  \item Multilayer perceptrons as compositions of affine maps and nonlinearities
+  \item Activations, logits, and loss functions
+  \item The complete training pipeline
+  \item Initialisation and the scale of signals and gradients
+  \item Input scaling, weight initialisation, and internal normalisation
 \end{itemize}
-
 \end{frame}
 
-\begin{frame}[fragile]\frametitle{Other Types of Learning}
-\begin{itemize}
-\item Self-supervised Learning - learn with targets induced by a prior on the unlabelled training data
-
-\item Active Learning - learn by seeking guidance from human or oracle when needed (iterative semi-supervised learning)
-
-\item Continual Learning - learn new tasks/classes sequentially (iterative supervised/unsupervised learning)
-
-\item Online learning - learning one example at a time sequentially (iterative supervised learning)
-\end{itemize}
-
-\end{frame}
+%%-------------------------------------------------------------%
+% Retained for possible reuse in the Basic ML lectures.
+% Superseded material retained for possible reuse.
+% \begin{comment}
+%
+% % \begin{frame}[fragile]\frametitle{Classical Types of Learning}
+% \begin{itemize}
+% \item Supervised Learning - learn to predict an output when given an input vector
+%
+% \item Unsupervised Learning - discover a good internal representation of the input
+%
+% \item Reinforcement Learning - learn to select an action to maximize the expectation of future rewards (payoff)
+%
+% \item Semi-supervised Learning - learn with few labelled examples and many unlabelled ones
+% \end{itemize}
+%
+% \end{frame}
+%
+% % \begin{frame}[fragile]\frametitle{Other Types of Learning}
+% \begin{itemize}
+% \item Self-supervised Learning - learn with targets induced by a prior on the unlabelled training data
+%
+% \item Active Learning - learn by seeking guidance from human or oracle when needed (iterative semi-supervised learning)
+%
+% \item Continual Learning - learn new tasks/classes sequentially (iterative supervised/unsupervised learning)
+%
+% \item Online learning - learning one example at a time sequentially (iterative supervised learning)
+% \end{itemize}
+%
+% \end{frame}
+%
+% \end{comment}
 
 %%-------------------------------------------------------------%
 
@@ -278,19 +296,23 @@
 
 %%-------------------------------------------------------------%
 
-\begin{frame}[fragile]\frametitle{Two Types of Supervised Learning}
-\begin{itemize}
-\item<+-> Regression:  The machine is asked predict $k$ numerical values given some input. The machine is a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^k$.
-\item<+-> Classification:  The machine is asked to specify which of $k$ categories some input belongs to.
-\begin{itemize}
-  \item Multiclass classification - target is one of the $k$ classes
-  \item Multilabel classification - target is some number of the $k$ classes
-  \item In both cases, the machine is a function $f : \mathbb{R}^n \rightarrow \{1, ..., k\}$.
-\end{itemize}
-\item<+-> It is most common for both types of algorithms to actually learn $\hat f : \mathbb{R}^n \rightarrow \mathbb{R}^k$.
-\mode<article>{\item<+-> Note that there are lots of exceptions in the form the inputs (and outputs) can take though! We'll see lots of variations in the coming weeks.}
-\end{itemize}
-\end{frame}
+% Retained for possible reuse in Basic Machine Learning I.
+% Superseded material retained for possible reuse.
+% \begin{comment}
+% % \begin{frame}[fragile]\frametitle{Two Types of Supervised Learning}
+% \begin{itemize}
+% \item<+-> Regression:  The machine is asked predict $k$ numerical values given some input. The machine is a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^k$.
+% \item<+-> Classification:  The machine is asked to specify which of $k$ categories some input belongs to.
+% \begin{itemize}
+%   \item Multiclass classification - target is one of the $k$ classes
+%   \item Multilabel classification - target is some number of the $k$ classes
+%   \item In both cases, the machine is a function $f : \mathbb{R}^n \rightarrow \{1, ..., k\}$.
+% \end{itemize}
+% \item<+-> It is most common for both types of algorithms to actually learn $\hat f : \mathbb{R}^n \rightarrow \mathbb{R}^k$.
+% \mode<article>{\item<+-> Note that there are lots of exceptions in the form the inputs (and outputs) can take though! We'll see lots of variations in the coming weeks.}
+% \end{itemize}
+% \end{frame}
+% \end{comment}
 %%-------------------------------------------------------------%
 
 
@@ -501,18 +523,69 @@ $\softmax(\bm z)_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}} \;\;\;\;\;\;\; \forall
 \end{center}
 
 \begin{itemize}
-  \item Note that \mode<article>{unlike the other activation functions you've seen,} $\softmax$ makes reference to all the elements in the output.
-  \mode<article>{\item The output of a softmax layer is a set of positive numbers which sum up to $1$ and can be thought of as a probability distribution.}
-  \mode<presentation>{
-  \item output: positive numbers that sum to 1.
-  }
-  \item Note:
-  \begin{align*}
-    {\frac{\partial \softmax(\bm z)_i }{\partial z_i}} \;&= \;{\softmax(z_i) (1 - \softmax(z_i))}\\
-  {\frac{\partial \softmax(\bm z)_i }{\partial z_j} }\;&= \;{\softmax(z_i) ({1}(i=j) - \softmax(z_j)) }\\
-  \;&= \;{\softmax(z_i) (\delta_{ij} - \softmax(z_j))}
-  \end{align*}
-  
+  \item The outputs are positive and sum to 1.
+  \item The denominator contains every logit, so every output depends on every input.
+  \item Let $\bm s=\softmax(\bm z)$. The entries of its Jacobian are:
+  \[
+    \frac{\partial s_i}{\partial z_j}
+    = s_i(\delta_{ij}-s_j).
+  \]
+  Here $\delta_{ij}$ is the Kronecker delta: it is 1 if $i=j$, and 0 otherwise.
+\end{itemize}
+
+\end{frame}
+
+%-------------------------------------------------------------%
+
+\begin{frame}[fragile]\frametitle{Softmax as a relaxation of one-hot argmax}
+
+\begin{itemize}
+  \item<+-> A multiclass decision selects the largest logit:
+  \[
+    c = \argmax_k z_k.
+  \]
+  \item<+-> The equivalent one-hot vector is discontinuous: a small change in the logits can switch the selected class.
+  \item<+-> Softmax replaces the hard one-hot vector with a continuous, differentiable distribution:
+  \[
+    \begin{array}{r@{\;}c@{\;}rrrr@{\;}c}
+      \bm z = & [ & 1.1 & 4.0 & -0.1 & 2.3 & ] \\
+      \operatorname{onehot}(\argmax_k z_k) = & [ & 0 & 1 & 0 & 0 & ] \\
+      \softmax(\bm z) = & [ & 0.044 & 0.797 & 0.013 & 0.146 & ]
+    \end{array}
+  \]
+  \item<+-> The largest component stays associated with the predicted class, but the output retains information about the alternatives.
+\end{itemize}
+
+\end{frame}
+
+%-------------------------------------------------------------%
+
+\begin{frame}[fragile]\frametitle{Temperature controls the relaxation}
+
+\begin{center}
+\[
+  \softmax(\bm z/T)_i =
+  \frac{e^{z_i/T}}{\sum_{j=1}^{K} e^{z_j/T}},
+  \qquad T>0.
+\]
+\end{center}
+
+\begin{itemize}
+  \item<+-> Lower temperatures sharpen the distribution:
+  \[
+    \begin{array}{r@{\;}c@{\;}rrrr@{\;}c}
+      T=1.0: & [ & 0.044 & 0.797 & 0.013 & 0.146 & ] \\
+      T=0.6: & [ & 0.008 & 0.937 & 0.001 & 0.055 & ] \\
+      T=0.2: & [ & 5.0{\times}10^{-7} & 0.9998 & 1.3{\times}10^{-9} & 0.0002 & ]
+    \end{array}
+  \]
+  \item<+-> If the largest logit is unique, then as $T\to0^+$:
+  \[
+    \softmax(\bm z/T)
+    \longrightarrow
+    \operatorname{onehot}(\argmax_k z_k).
+  \]
+  \item<+-> Higher temperatures flatten the distribution. As $T\to\infty$, it approaches the uniform distribution.
 \end{itemize}
 
 \end{frame}
@@ -646,138 +719,184 @@ $\ell_{BCE}(\hat y, y) = -y \log(\hat y) - (1 - y) \log (1 - \hat y)$
 \end{frame}
 
 %-------------------------------------------------------------%
-\begin{frame}[fragile]\frametitle{Reminder: Gradient Descent}
 
-\begin{itemize}
-  \item Define total loss as $\mathcal{L} = \sum_{(\bm x,y) \in \bm D} \ell(g(\bm x,\bm\theta), y)$ for some loss function $\ell$, dataset $\bm D$ and model $g$ with learnable parameters $\bm\theta$.
-  \item Define how many passes over the data to make (each one known as an Epoch)
-  \item Define a learning rate $\lambda$
-\end{itemize}
-
-Gradient Descent updates the parameters $\bm\theta$ by moving them in the direction of the negative gradient with respect to the \textbf{total loss} $\mathcal{L}$ by the learning rate $\lambda$ multiplied by the gradient:
-
-\mode<presentation>{\vspace{1em}}
-\noindent\hspace{1cm} \texttt{for each Epoch:}\newline
-\null\hspace{2cm} $\bm\theta \leftarrow \bm\theta - \lambda \nabla_{\bm\theta} \mathcal{L}$
-\end{frame}
-%-------------------------------------------------------------%
-
-\begin{frame}[fragile]\frametitle{Reminder: Stochastic Gradient Descent}
-
-\begin{itemize}
-  \item Define loss function $\ell$, dataset $\bm D$ and model $g$ with learnable parameters $\bm\theta$.
-  \item Define how many passes over the data to make (each one known as an Epoch)
-  \item Define a learning rate $\lambda$
-\end{itemize}
-
-Stochastic Gradient Descent updates the parameters $\bm\theta$ by moving them in the direction of the negative gradient with respect to the loss of a \textbf{single item} $\ell$ by the learning rate $\lambda$ multiplied by the gradient:
-
-\mode<presentation>{\vspace{1em}}
-\noindent\hspace{1cm} \texttt{for each Epoch:}\newline
-  \null\hspace{2cm} \texttt{for each $(\bm x,y) \in \bm D$:}\newline
-    \null\hspace{3cm} $\bm\theta \leftarrow \bm\theta - \lambda \nabla_{\bm\theta} \ell$
+\begin{frame}\frametitle{The complete training pipeline}
 \end{frame}
 
 %-------------------------------------------------------------%
 
-\begin{frame}[fragile]\frametitle{A Quick Introduction to Tensors}
-Broadly speaking a tensor is defined as a linear mapping between sets of algebraic objects\footnote{This statement is always entirely true}. \\
-
-A tensor $T$ can be thought of as a generalization of scalars, vectors and matrices to a single algebraic object.\\
-
-We can just think of this as a multidimensional array\footnote{This statement will upset mathematicians and physicists because its not always true for them (but it is for us!).}.
-
-\begin{itemize}
-\item A $0D$ tensor is a scalar
-\item A $1D$ tensor is a vector
-\item A $2D$ tensor is a matrix
-\item A $3D$ tensor can be thought of as a vector of identically sized matrices
-\item A $4D$ tensor can be thought of as a matrix of identically sized matrices or a sequence of $3D$ tensors
-\item \dots
-\end{itemize}
+\begin{frame}\frametitle{Why zero initialisation fails}
 \end{frame}
 
-% %%-------------------------------------------------------------%
+%-------------------------------------------------------------%
 
-\mode<article>{
-\begin{frame}[fragile]\frametitle{Aside: Tensor Decompositions}
-\begin{itemize}
-  \item<+-> Just in the same way a matrix can be decomposed into a product of matrices (EVD, SVD, QR, LU, Cholesky, ...), there are tensor decompositions:
-  \begin{itemize}
-    \item<+-> PARAFAC / Canonical polyadic / HO-SVD / Tucker
-    \item<+-> These have found their way into some deep learning models as a form of structural regularisation or weight reduction
-  \end{itemize}
-\end{itemize}
-\end{frame}
-}
-
-% %%-------------------------------------------------------------%
-
-\begin{frame}[fragile]\frametitle{Operations on Tensors in PyTorch}
-\begin{itemize}
-  \item PyTorch lets you do all the standard matrix operations on 2D tensors
-  \begin{itemize}
-    \item including important things you might not yet have seen like the \textbf{hadamard product} of two $N \times M$ matrices: $\bm A \odot \bm B)$
-  \end{itemize}
-  \item You can do element-wise add/divide/subtract/multiply to ND-tensors
-  \begin{itemize}
-    \item and even apply scalar functions element-wise ($\log, \sin, \exp, ...$)
-  \end{itemize}
-  \item you can slice, reshape, and \emph{even index a single element} (\textbf{generally don't do that!})
-  \item PyTorch often lets you \emph{broadcast} operations (just like in numpy)
-  \begin{itemize}
-    \item if a PyTorch operation supports broadcast, then its Tensor arguments can be automatically expanded to be of equal sizes (without making copies of the data).\footnote{Important - read and understand this after the lab: https://pytorch.org/docs/stable/notes/broadcasting.html}
-  \end{itemize}
-\end{itemize}
+\begin{frame}\frametitle{The scale of the initial weights matters}
 \end{frame}
 
-% %%-------------------------------------------------------------%
+%-------------------------------------------------------------%
 
-\begin{frame}[fragile]\frametitle{Tensors, batches and vectorisation}
-
-\begin{itemize}
-  \item<+-> The reality of training a model is that we neither use gradient descent or stochastic gradient descent; we do something in-between called mini-batch SGD.
-  \item<+-> This works on batches of data (e.g. small subsets of the training set)
-  \item<+-> These batches are assembled into a tensor
-  \item<+-> Broadcasting is used to apply operations/functions to all the samples in the batch tensor \emph{in parallel} to compute a loss vector
-  \item<+-> the loss vector is summed/averaged using a \emph{vectorised} method (e.g. \verb|.sum()|)
-\end{itemize}
-
+\begin{frame}\frametitle{Variance propagation through a layer}
 \end{frame}
 
-% % %%-------------------------------------------------------------%
+%-------------------------------------------------------------%
 
-% \begin{frame}[t]\frametitle{Tensor implementation}
-% It's important to understand something about how tensors are implemented in software and particularly how memory copies can be avoided...
+\begin{frame}\frametitle{Xavier and Glorot initialisation}
+\end{frame}
+
+%-------------------------------------------------------------%
+
+\begin{frame}\frametitle{He and Kaiming initialisation}
+\end{frame}
+
+%-------------------------------------------------------------%
+
+\begin{frame}\frametitle{Bias initialisation and PyTorch defaults}
+\end{frame}
+
+%-------------------------------------------------------------%
+
+\begin{frame}\frametitle{Input scaling, initialisation, and internal normalisation}
+\end{frame}
+
+
+%-------------------------------------------------------------%
+% The following material has already been covered in the tensor and
+% optimisation lectures. It is retained below for possible reuse.
+% Superseded material retained for possible reuse.
+% \begin{comment}
+% % \begin{frame}[fragile]\frametitle{Reminder: Gradient Descent}
+%
+% \begin{itemize}
+%   \item Define total loss as $\mathcal{L} = \sum_{(\bm x,y) \in \bm D} \ell(g(\bm x,\bm\theta), y)$ for some loss function $\ell$, dataset $\bm D$ and model $g$ with learnable parameters $\bm\theta$.
+%   \item Define how many passes over the data to make (each one known as an Epoch)
+%   \item Define a learning rate $\lambda$
+% \end{itemize}
+%
+% Gradient Descent updates the parameters $\bm\theta$ by moving them in the direction of the negative gradient with respect to the \textbf{total loss} $\mathcal{L}$ by the learning rate $\lambda$ multiplied by the gradient:
+%
+% \mode<presentation>{\vspace{1em}}
+% \noindent\hspace{1cm} \texttt{for each Epoch:}\newline
+% \null\hspace{2cm} $\bm\theta \leftarrow \bm\theta - \lambda \nabla_{\bm\theta} \mathcal{L}$
 % \end{frame}
-
-% % %%-------------------------------------------------------------%
-
-% \begin{frame}[t]\frametitle{We are siamese...}
-% An important and clever trick:
+% %-------------------------------------------------------------%
+%
+% % \begin{frame}[fragile]\frametitle{Reminder: Stochastic Gradient Descent}
+%
+% \begin{itemize}
+%   \item Define loss function $\ell$, dataset $\bm D$ and model $g$ with learnable parameters $\bm\theta$.
+%   \item Define how many passes over the data to make (each one known as an Epoch)
+%   \item Define a learning rate $\lambda$
+% \end{itemize}
+%
+% Stochastic Gradient Descent updates the parameters $\bm\theta$ by moving them in the direction of the negative gradient with respect to the loss of a \textbf{single item} $\ell$ by the learning rate $\lambda$ multiplied by the gradient:
+%
+% \mode<presentation>{\vspace{1em}}
+% \noindent\hspace{1cm} \texttt{for each Epoch:}\newline
+%   \null\hspace{2cm} \texttt{for each $(\bm x,y) \in \bm D$:}\newline
+%     \null\hspace{3cm} $\bm\theta \leftarrow \bm\theta - \lambda \nabla_{\bm\theta} \ell$
 % \end{frame}
-
-% %%-------------------------------------------------------------%
-
-\begin{frame}[fragile]\frametitle{Homework}
-\mode<presentation>{
- \begin{center}
-  PyTorch Tensor 101:\\
-  \url{https://colab.research.google.com/gist/jonhare/d98813b2224dddbb234d2031510878e1/notebook.ipynb}
-  \\[1em]
-  Watch and understand this: \url{https://southampton.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=c62809ad-af4d-4c7f-89e1-b26f00f85cd9}
-\end{center} 
-}
-\mode<article>{
-  PyTorch Tensor 101:\newline\small{
-  \url{https://colab.research.google.com/gist/jonhare/d98813b2224dddbb234d2031510878e1/notebook.ipynb}
-  }
-  \par
-  Watch and understand this:\newline\small{
-  \url{https://southampton.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=c62809ad-af4d-4c7f-89e1-b26f00f85cd9}
-  }
-}
-\end{frame}
-
-%-------------------------------------------------------------%
+%
+% %-------------------------------------------------------------%
+%
+% % \begin{frame}[fragile]\frametitle{A Quick Introduction to Tensors}
+% Broadly speaking a tensor is defined as a linear mapping between sets of algebraic objects\footnote{This statement is always entirely true}. \\
+%
+% A tensor $T$ can be thought of as a generalization of scalars, vectors and matrices to a single algebraic object.\\
+%
+% We can just think of this as a multidimensional array\footnote{This statement will upset mathematicians and physicists because its not always true for them (but it is for us!).}.
+%
+% \begin{itemize}
+% \item A $0D$ tensor is a scalar
+% \item A $1D$ tensor is a vector
+% \item A $2D$ tensor is a matrix
+% \item A $3D$ tensor can be thought of as a vector of identically sized matrices
+% \item A $4D$ tensor can be thought of as a matrix of identically sized matrices or a sequence of $3D$ tensors
+% \item \dots
+% \end{itemize}
+% \end{frame}
+%
+% % %%-------------------------------------------------------------%
+%
+% \mode<article>{
+% % \begin{frame}[fragile]\frametitle{Aside: Tensor Decompositions}
+% \begin{itemize}
+%   \item<+-> Just in the same way a matrix can be decomposed into a product of matrices (EVD, SVD, QR, LU, Cholesky, ...), there are tensor decompositions:
+%   \begin{itemize}
+%     \item<+-> PARAFAC / Canonical polyadic / HO-SVD / Tucker
+%     \item<+-> These have found their way into some deep learning models as a form of structural regularisation or weight reduction
+%   \end{itemize}
+% \end{itemize}
+% \end{frame}
+% }
+%
+% % %%-------------------------------------------------------------%
+%
+% % \begin{frame}[fragile]\frametitle{Operations on Tensors in PyTorch}
+% \begin{itemize}
+%   \item PyTorch lets you do all the standard matrix operations on 2D tensors
+%   \begin{itemize}
+%     \item including important things you might not yet have seen like the \textbf{hadamard product} of two $N \times M$ matrices: $\bm A \odot \bm B)$
+%   \end{itemize}
+%   \item You can do element-wise add/divide/subtract/multiply to ND-tensors
+%   \begin{itemize}
+%     \item and even apply scalar functions element-wise ($\log, \sin, \exp, ...$)
+%   \end{itemize}
+%   \item you can slice, reshape, and \emph{even index a single element} (\textbf{generally don't do that!})
+%   \item PyTorch often lets you \emph{broadcast} operations (just like in numpy)
+%   \begin{itemize}
+%     \item if a PyTorch operation supports broadcast, then its Tensor arguments can be automatically expanded to be of equal sizes (without making copies of the data).\footnote{Important - read and understand this after the lab: https://pytorch.org/docs/stable/notes/broadcasting.html}
+%   \end{itemize}
+% \end{itemize}
+% \end{frame}
+%
+% % %%-------------------------------------------------------------%
+%
+% % \begin{frame}[fragile]\frametitle{Tensors, batches and vectorisation}
+%
+% \begin{itemize}
+%   \item<+-> The reality of training a model is that we neither use gradient descent or stochastic gradient descent; we do something in-between called mini-batch SGD.
+%   \item<+-> This works on batches of data (e.g. small subsets of the training set)
+%   \item<+-> These batches are assembled into a tensor
+%   \item<+-> Broadcasting is used to apply operations/functions to all the samples in the batch tensor \emph{in parallel} to compute a loss vector
+%   \item<+-> the loss vector is summed/averaged using a \emph{vectorised} method (e.g. \verb|.sum()|)
+% \end{itemize}
+%
+% \end{frame}
+%
+% % % %%-------------------------------------------------------------%
+%
+% % \begin{frame}[t]\frametitle{Tensor implementation}
+% % It's important to understand something about how tensors are implemented in software and particularly how memory copies can be avoided...
+% % \end{frame}
+%
+% % % %%-------------------------------------------------------------%
+%
+% % \begin{frame}[t]\frametitle{We are siamese...}
+% % An important and clever trick:
+% % \end{frame}
+%
+% % %%-------------------------------------------------------------%
+%
+% % \begin{frame}[fragile]\frametitle{Homework}
+% \mode<presentation>{
+%  \begin{center}
+%   PyTorch Tensor 101:\\
+%   \url{https://colab.research.google.com/gist/jonhare/d98813b2224dddbb234d2031510878e1/notebook.ipynb}
+%   \\[1em]
+%   Watch and understand this: \url{https://southampton.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=c62809ad-af4d-4c7f-89e1-b26f00f85cd9}
+% \end{center}
+% }
+% \mode<article>{
+%   PyTorch Tensor 101:\newline\small{
+%   \url{https://colab.research.google.com/gist/jonhare/d98813b2224dddbb234d2031510878e1/notebook.ipynb}
+%   }
+%   \par
+%   Watch and understand this:\newline\small{
+%   \url{https://southampton.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=c62809ad-af4d-4c7f-89e1-b26f00f85cd9}
+%   }
+% }
+% \end{frame}
+%
+% %-------------------------------------------------------------%
+% \end{comment}
 \end{document}
