@@ -447,37 +447,6 @@ Note $\beta = 0.9$ is a good choice for the momentum parameter.
 \end{frame}
 
 %-------------------------------------------------------------%
-\begin{frame}\frametitle{More advanced optimisers}
-
-\begin{itemize}
-  \item<+-> Adagrad
-  \begin{itemize}
-    \item Decrease learning rate dynamically per weight.
-    \item Squared magnitude of the gradient (2nd moment) used to adjust how quickly progress is made - weights with large gradients are compensated with a smaller learning rate.
-    \item Particularly effective for sparse features.
-  \end{itemize}
-  \item<+-> RMSProp
-  \begin{itemize}
-    \item Modifies Adagrad to decouple learning rate from gradient magnitude scaling
-    \item Incorporates leaky averaging of squared gradient magnitudes
-    \item LR would typically follow a predefined schedule
-  \end{itemize}
-  \item<+-> Adam
-  \begin{itemize}
-    \item Essentially takes all the best ideas from RMSProp and SDG+Momentum
-    \item Bias corrected momentum and second moment estimation
-    \item Shown that it might still diverge (or be non optimal, even in convex settings)...
-    \item LR is still a hyperparameter (you might still schedule)
-  \end{itemize}
-  \item<+-> AdamW
-  \begin{itemize}
-    \item Fixes an Adam implementation issues by decoupling L2 regularisation (weight decay)
-  \end{itemize}
-\end{itemize}
-
-\end{frame}
-
-%-------------------------------------------------------------%
 \begin{frame}\frametitle{Warm-up and Cosine Annealing}
 \begin{itemize}
   \item One of the most common approaches in recent models
@@ -510,8 +479,37 @@ Note $\beta = 0.9$ is a good choice for the momentum parameter.
 \end{frame}
 
 %-------------------------------------------------------------%
+\begin{frame}\frametitle{More advanced optimisers}
 
+\begin{itemize}
+  \item<+-> Adagrad
+  \begin{itemize}
+    \item Decrease learning rate dynamically per weight.
+    \item Squared magnitude of the gradient (2nd moment) used to adjust how quickly progress is made - weights with large gradients are compensated with a smaller learning rate.
+    \item Particularly effective for sparse features.
+  \end{itemize}
+  \item<+-> RMSProp
+  \begin{itemize}
+    \item Modifies Adagrad to decouple learning rate from gradient magnitude scaling
+    \item Incorporates leaky averaging of squared gradient magnitudes
+    \item LR would typically follow a predefined schedule
+  \end{itemize}
+  \item<+-> Adam
+  \begin{itemize}
+    \item Essentially takes all the best ideas from RMSProp and SDG+Momentum
+    \item Bias corrected momentum and second moment estimation
+    \item Shown that it might still diverge (or be non optimal, even in convex settings)...
+    \item LR is still a hyperparameter (you might still schedule)
+  \end{itemize}
+  \item<+-> AdamW
+  \begin{itemize}
+    \item Fixes an Adam implementation issues by decoupling L2 regularisation (weight decay)
+  \end{itemize}
+\end{itemize}
 
+\end{frame}
+
+%-------------------------------------------------------------%
 
 \begin{frame}\frametitle{Take-away messages}
 
