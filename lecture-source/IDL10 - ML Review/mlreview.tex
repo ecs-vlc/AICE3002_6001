@@ -164,6 +164,7 @@
 
 \DeclareMathOperator{\softmax}{softmax}
 \DeclareMathOperator{\argmax}{arg\,max}
+\DeclareMathOperator{\ReLU}{ReLU}
 
 \begin{document}
 
@@ -720,42 +721,225 @@ $\ell_{BCE}(\hat y, y) = -y \log(\hat y) - (1 - y) \log (1 - \hat y)$
 
 %-------------------------------------------------------------%
 
-\begin{frame}\frametitle{The complete training pipeline}
+\begin{frame}[fragile]\frametitle{The complete training pipeline}
+\begin{enumerate}
+  \item<+-> Initialise the model parameters $\bm\theta$ and the optimiser state.
+  \item<+-> Draw a minibatch $(\bm X,\bm y)$ and run the forward pass:
+  \[
+    \hat{\bm y}=f(\bm X;\bm\theta),
+    \qquad
+    \mathcal L=\frac{1}{B}\sum_{i=1}^{B}\ell(\hat{\bm y}_i,\bm y_i).
+  \]
+  \item<+-> Use reverse-mode automatic differentiation to compute
+  $\nabla_{\bm\theta}\mathcal L$.
+  \item<+-> Update the parameters and repeat with another minibatch.
+\end{enumerate}
+
+\mode<presentation>{\vspace{0.4em}}
+\begin{block}{One PyTorch training step}
+\texttt{optimizer.zero\_grad()} $\;\rightarrow\;$
+\texttt{loss = criterion(model(x), y)} $\;\rightarrow\;$
+\texttt{loss.backward()} $\;\rightarrow\;$
+\texttt{optimizer.step()}
+\end{block}
 \end{frame}
 
 %-------------------------------------------------------------%
 
 \begin{frame}\frametitle{Why zero initialisation fails}
+\begin{itemize}
+  \item<+-> Suppose every hidden unit in a layer starts with the same incoming weights and bias.
+  \item<+-> The units compute the same activation and receive the same gradient:
+  \[
+    \bm w_j=\bm w_k
+    \quad\Longrightarrow\quad
+    h_j=h_k
+    \quad\text{and}\quad
+    \nabla_{\bm w_j}\mathcal L=\nabla_{\bm w_k}\mathcal L.
+  \]
+  \item<+-> An update preserves this equality. The units remain copies of one another, so the layer cannot learn distinct features.
+  \item<+-> Random weight initialisation breaks this symmetry.
+  \begin{itemize}
+    \item Biases may still be initialised to zero because the random weights have already broken the symmetry.
+  \end{itemize}
+  \item<+-> With ReLU, zero pre-activations are especially problematic because PyTorch uses a derivative of zero at the origin.
+\end{itemize}
 \end{frame}
 
 %-------------------------------------------------------------%
 
 \begin{frame}\frametitle{The scale of the initial weights matters}
+\begin{itemize}
+  \item<+-> Each layer transforms the scale of its inputs. Let
+  \[
+    q_\ell=\mathbb E[(h^{(\ell)})^2],
+    \qquad
+    q_\ell\approx c\,q_{\ell-1}.
+  \]
+  \item<+-> Across $L$ similar layers:
+  \[
+    q_L\approx c^L q_0.
+  \]
+  \item<+-> If $c=0.5$, then after 20 layers the signal is scaled by about $10^{-6}$.
+  \item<+-> If $c=2$, the same network amplifies it by about $10^6$.
+  \item<+-> Backpropagation has the same repeated-multiplication problem. We want activations and gradients to stay at a useful scale.
+\end{itemize}
 \end{frame}
 
 %-------------------------------------------------------------%
 
-\begin{frame}\frametitle{Variance propagation through a layer}
+\begin{frame}\frametitle{Variance propagation through a linear layer}
+For one output of a linear layer,
+\[
+  z_j=\sum_{i=1}^{n_{\mathrm{in}}}w_{ji}x_i.
+\]
+
+\begin{itemize}
+  \item<+-> Assume the inputs and weights are independent, zero-centred, and identically distributed.
+  \item<+-> If $\operatorname{Var}[w_{ji}]=\sigma_w^2$ and
+  $\operatorname{Var}[x_i]=q$, then
+  \[
+    \operatorname{Var}[z_j]
+    =n_{\mathrm{in}}\,\sigma_w^2 q.
+  \]
+  \item<+-> Preserving the forward variance suggests
+  $\sigma_w^2\approx 1/n_{\mathrm{in}}$.
+  \item<+-> Applying the same argument to the backward pass suggests
+  $\sigma_w^2\approx 1/n_{\mathrm{out}}$.
+\end{itemize}
 \end{frame}
 
 %-------------------------------------------------------------%
 
 \begin{frame}\frametitle{Xavier and Glorot initialisation}
+\begin{itemize}
+  \item<+-> When $n_{\mathrm{in}}\neq n_{\mathrm{out}}$, one weight variance cannot exactly preserve scale in both directions.
+  \item<+-> Xavier initialisation uses the compromise
+  \[
+    \operatorname{Var}[w]
+    =\frac{2}{n_{\mathrm{in}}+n_{\mathrm{out}}}.
+  \]
+  \item<+-> Common forms are
+  \[
+    w\sim\mathcal N\left(0,\frac{2}{n_{\mathrm{in}}+n_{\mathrm{out}}}\right)
+  \]
+  or
+  \[
+    w\sim\mathcal U\left[
+      -\sqrt{\frac{6}{n_{\mathrm{in}}+n_{\mathrm{out}}}},
+      \sqrt{\frac{6}{n_{\mathrm{in}}+n_{\mathrm{out}}}}
+    \right].
+  \]
+  \item<+-> This reasoning fits linear activations and tanh near its approximately linear region.
+\end{itemize}
+\end{frame}
+
+%-------------------------------------------------------------%
+
+\begin{frame}\frametitle{Why Xavier under-scales ReLU networks}
+Let $q_\ell=\mathbb E[(h^{(\ell)})^2]$. If the pre-activations are symmetric around zero, then
+\[
+  \mathbb E[\ReLU(z)^2]
+  =\frac{1}{2}\mathbb E[z^2].
+\]
+
+\begin{itemize}
+  \item<+-> With equal fan-in and fan-out, Xavier gives
+  $\operatorname{Var}[w]\approx 1/n_{\mathrm{in}}$.
+  \item<+-> A ReLU layer therefore gives approximately
+  \[
+    q_\ell
+    \approx
+    \frac{1}{2}
+    n_{\mathrm{in}}\operatorname{Var}[w]q_{\ell-1}
+    \approx\frac{1}{2}q_{\ell-1}.
+  \]
+  \item<+-> Repeated ReLU layers can shrink the activation scale by roughly
+  $2^{-L}$. The backward pass loses a similar factor because only the active ReLUs transmit gradients.
+\end{itemize}
 \end{frame}
 
 %-------------------------------------------------------------%
 
 \begin{frame}\frametitle{He and Kaiming initialisation}
+\begin{itemize}
+  \item<+-> He initialisation compensates for the factor of $\frac{1}{2}$ introduced by ReLU:
+  \[
+    \operatorname{Var}[w]=\frac{2}{n_{\mathrm{in}}}.
+  \]
+  \item<+-> Now the activation second moment is approximately preserved:
+  \[
+    q_\ell
+    \approx
+    \frac{1}{2}
+    n_{\mathrm{in}}\frac{2}{n_{\mathrm{in}}}q_{\ell-1}
+    =q_{\ell-1}.
+  \]
+  \item<+-> Common choices are
+  \[
+    w\sim\mathcal N\left(0,\frac{2}{n_{\mathrm{in}}}\right)
+    \quad\text{or}\quad
+    w\sim\mathcal U\left[-\sqrt{\frac{6}{n_{\mathrm{in}}}},
+                           \sqrt{\frac{6}{n_{\mathrm{in}}}}\right].
+  \]
+  \item<+-> The correct gain depends on the activation. Leaky ReLU, for example, also passes part of the negative signal.
+\end{itemize}
 \end{frame}
 
 %-------------------------------------------------------------%
 
-\begin{frame}\frametitle{Bias initialisation and PyTorch defaults}
+\begin{frame}[fragile]\frametitle{Bias initialisation and PyTorch defaults}
+\begin{itemize}
+  \item<+-> Hidden-layer biases can usually start at zero. Random weights already break the symmetry between units.
+  \item<+-> An output bias can encode a useful prior. For binary classification with positive rate $p$:
+  \[
+    b=\log\frac{p}{1-p}.
+  \]
+  \item<+-> \texttt{nn.Linear} currently draws its weights and biases uniformly from
+  \[
+    \left[-\frac{1}{\sqrt{n_{\mathrm{in}}}},
+           \frac{1}{\sqrt{n_{\mathrm{in}}}}\right].
+  \]
+  This historical default is not the standard He initialisation for a ReLU layer.
+  \item<+-> Initialise explicitly when the activation assumption matters:
+  \begin{center}
+    \texttt{nn.init.kaiming\_normal\_(layer.weight, nonlinearity="relu")}\\
+    \texttt{nn.init.zeros\_(layer.bias)}
+  \end{center}
+\end{itemize}
+\blfootnote{\href{https://github.com/pytorch/pytorch/blob/main/torch/nn/modules/linear.py}{PyTorch \texttt{nn.Linear} source}}
 \end{frame}
 
 %-------------------------------------------------------------%
 
 \begin{frame}\frametitle{Input scaling, initialisation, and internal normalisation}
+\begin{tabularx}{\textwidth}{
+  >{\bfseries\raggedright\arraybackslash}p{0.22\textwidth}
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X
+}
+\toprule
+Mechanism & What it controls & When it acts \\
+\midrule
+Input scaling &
+The scale and conditioning of the data entering the first layer &
+Before training. Estimate scaling statistics from the training data only. \\
+\addlinespace
+Weight initialisation &
+The starting scale and symmetry of the parameters &
+Once, when the model is constructed. Match it to the activation. \\
+\addlinespace
+Internal normalisation &
+The scale of learned activations inside the network &
+During each forward pass. BatchNorm and LayerNorm use different statistics. \\
+\bottomrule
+\end{tabularx}
+
+\mode<presentation>{\vspace{0.7em}}
+\begin{itemize}
+  \item These mechanisms complement one another. Normalisation does not make careful data scaling or sensible initialisation irrelevant.
+  \item We will return to internal normalisation in the practical training lecture.
+\end{itemize}
 \end{frame}
 
 
