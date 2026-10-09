@@ -770,15 +770,15 @@ $\ell_{BCE}(\hat y, y) = -y \log(\hat y) - (1 - y) \log (1 - \hat y)$
 
 \begin{frame}\frametitle{The scale of the initial weights matters}
 \begin{itemize}
-  \item<+-> Each layer transforms the scale of its inputs. Let
+  \item<+-> Each layer transforms the scale of its inputs. Let $h^{(r)}$ denote an activation after layer $r$, and define its second moment as
   \[
-    q_\ell=\mathbb E[(h^{(\ell)})^2],
+    q^{(r)}=\mathbb E[(h^{(r)})^2],
     \qquad
-    q_\ell\approx c\,q_{\ell-1}.
+    q^{(r)}\approx c\,q^{(r-1)}.
   \]
-  \item<+-> Across $L$ similar layers:
+  \item<+-> Across a network of depth $D$:
   \[
-    q_L\approx c^L q_0.
+    q^{(D)}\approx c^D q^{(0)}.
   \]
   \item<+-> If $c=0.5$, then after 20 layers the signal is scaled by about $10^{-6}$.
   \item<+-> If $c=2$, the same network amplifies it by about $10^6$.
@@ -837,7 +837,7 @@ For one output of a linear layer,
 %-------------------------------------------------------------%
 
 \begin{frame}\frametitle{Why Xavier under-scales ReLU networks}
-Let $q_\ell=\mathbb E[(h^{(\ell)})^2]$. If the pre-activations are symmetric around zero, then
+Let $q^{(r)}=\mathbb E[(h^{(r)})^2]$. If the pre-activations are symmetric around zero, then
 \[
   \mathbb E[\ReLU(z)^2]
   =\frac{1}{2}\mathbb E[z^2].
@@ -848,14 +848,14 @@ Let $q_\ell=\mathbb E[(h^{(\ell)})^2]$. If the pre-activations are symmetric aro
   $\operatorname{Var}[w]\approx 1/n_{\mathrm{in}}$.
   \item<+-> A ReLU layer therefore gives approximately
   \[
-    q_\ell
+    q^{(r)}
     \approx
     \frac{1}{2}
-    n_{\mathrm{in}}\operatorname{Var}[w]q_{\ell-1}
-    \approx\frac{1}{2}q_{\ell-1}.
+    n_{\mathrm{in}}\operatorname{Var}[w]q^{(r-1)}
+    \approx\frac{1}{2}q^{(r-1)}.
   \]
   \item<+-> Repeated ReLU layers can shrink the activation scale by roughly
-  $2^{-L}$. The backward pass loses a similar factor because only the active ReLUs transmit gradients.
+  $2^{-D}$. The backward pass loses a similar factor because only the active ReLUs transmit gradients.
 \end{itemize}
 \end{frame}
 
@@ -869,11 +869,11 @@ Let $q_\ell=\mathbb E[(h^{(\ell)})^2]$. If the pre-activations are symmetric aro
   \]
   \item<+-> Now the activation second moment is approximately preserved:
   \[
-    q_\ell
+    q^{(r)}
     \approx
     \frac{1}{2}
-    n_{\mathrm{in}}\frac{2}{n_{\mathrm{in}}}q_{\ell-1}
-    =q_{\ell-1}.
+    n_{\mathrm{in}}\frac{2}{n_{\mathrm{in}}}q^{(r-1)}
+    =q^{(r-1)}.
   \]
   \item<+-> Common choices are
   \[
@@ -882,7 +882,7 @@ Let $q_\ell=\mathbb E[(h^{(\ell)})^2]$. If the pre-activations are symmetric aro
     w\sim\mathcal U\left[-\sqrt{\frac{6}{n_{\mathrm{in}}}},
                            \sqrt{\frac{6}{n_{\mathrm{in}}}}\right].
   \]
-  \item<+-> The correct gain depends on the activation. Leaky ReLU, for example, also passes part of the negative signal.
+  % \item<+-> The correct gain depends on the activation. Leaky ReLU, for example, also passes part of the negative signal.
 \end{itemize}
 \end{frame}
 
