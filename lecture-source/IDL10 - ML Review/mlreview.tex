@@ -500,9 +500,9 @@
   \begin{itemize}
     \mode<presentation>{
       \item regression $\rightarrow$ typically linear
-      \item binary classification $\rightarrow$ typically Sigmoid
-      \item multilabel classification $\rightarrow$ typically Sigmoid
-      \item multiclass classification $\rightarrow$ typically Softmax
+      \item binary classification $\rightarrow$ typically Sigmoid (but...)
+      \item multilabel classification $\rightarrow$ typically Sigmoid (but...)
+      \item multiclass classification $\rightarrow$ typically Softmax (but...)
     }
     \mode<article>{
       \item For regression it is typically linear (e.g. identity), but you might choose others if you say wanted to clamp the range of the network.
@@ -531,7 +531,7 @@ $\softmax(\bm z)_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}} \;\;\;\;\;\;\; \forall
     \frac{\partial s_i}{\partial z_j}
     = s_i(\delta_{ij}-s_j).
   \]
-  Here $\delta_{ij}$ is the Kronecker delta: it is 1 if $i=j$, and 0 otherwise.
+  Where $\delta_{ij}$ is the Kronecker delta: it is 1 if $i=j$, and 0 otherwise.
 \end{itemize}
 
 \end{frame}
@@ -580,7 +580,7 @@ $\softmax(\bm z)_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}} \;\;\;\;\;\;\; \forall
       T=0.2: & [ & 5.0{\times}10^{-7} & 0.9998 & 1.3{\times}10^{-9} & 0.0002 & ]
     \end{array}
   \]
-  \item<+-> If the largest logit is unique, then as $T\to0^+$:
+  \item<+-> If the largest logit is unique, then as $T\to0$:
   \[
     \softmax(\bm z/T)
     \longrightarrow
@@ -658,7 +658,7 @@ $\ell_{BCE}(\hat y, y) = -y \log(\hat y) - (1 - y) \log (1 - \hat y)$
 
 \end{frame}
 %%-------------------------------------------------------------%
-
+\mode<article>{
 \begin{frame}[fragile]\frametitle{Binary Cross-Entropy --- Intuition}
 \begin{itemize}
 \item The cross-entropy can be thought of as a {\bf measure of surprise}.
@@ -666,6 +666,7 @@ $\ell_{BCE}(\hat y, y) = -y \log(\hat y) - (1 - y) \log (1 - \hat y)$
 \item Note the extreme case of infinite cross-entropy, if your model believes that a class has 0 probability of occurrence, and yet the class appears in the data, the `surprise' of your model will be infinitely great. 
 \end{itemize}
 \end{frame}
+}
 %%-------------------------------------------------------------%
 
 \begin{frame}[fragile]\frametitle{Binary Cross-Entropy for multiple labels}
@@ -705,15 +706,16 @@ $\ell_{BCE}(\hat y, y) = -y \log(\hat y) - (1 - y) \log (1 - \hat y)$
 \begin{frame}[fragile]\frametitle{Multiclass classification with Softmax Outputs}
 
 \begin{itemize}
-  \item<+-> Softmax can be thought of making the $K$ outputs of the network mimic a probability distribution.
-  \item<+-> The target label $y$ could also be represented as a distribution with a single 1 and zeros everywhere else.
-  \begin{itemize}
-    \item e.g. they are ``one-hot encoded''.
-  \end{itemize}
-  \item<+-> In such a case, the obvious loss function is the \emph{negative log likelihood} of the Categorical distribution (aka Multinoulli, Generalised Bernoulli, Multinomial with one sample)\mode<article>{\footnote{Note: Keras calls this function `Categorical Cross-Entropy'; you would need to have a Softmax output layer to use this}: $\ell_{NLL} = - \sum_{k = 1}^K y_k \log \hat y_k$}
+  % \item<+-> Softmax can be thought of making the $K$ outputs of the network mimic a probability distribution.
+  % \item<+-> The target label $y$ could also be represented as a distribution with a single 1 and zeros everywhere else.
+  % \begin{itemize}
+  %   \item e.g. they are ``one-hot encoded''.
+  % \end{itemize}
+  \item<+-> We saw Softmax makes the output look like a probability distribution.
+  \item<+-> Thus the obvious loss function is the \emph{negative log likelihood} of the Categorical distribution (aka Multinoulli, Generalised Bernoulli, Multinomial with one sample)\mode<article>{\footnote{Note: Keras calls this function `Categorical Cross-Entropy'; you would need to have a Softmax output layer to use this}: $\ell_{NLL} = - \sum_{k = 1}^K y_k \log \hat y_k$
   \begin{itemize}
     \item Note that in practice as $y_k$ is zero for all but one class you don't actually do this summation, and if $y$ is an integer class index you can write $\ell_{NLL} = - \log \hat y_y$.
-  \end{itemize}
+  \end{itemize}}
   \item<+-> \mode<article>{Analogously to what we saw for BCE, }Log-Sum-Exp can be used for better numerical stability. PyTorch combines LogSoftmax with NLL in one loss and calls this ``Categorical Cross-Entropy'' (so you would use this with a \textbf{linear output layer})
 \end{itemize}
 
@@ -723,16 +725,16 @@ $\ell_{BCE}(\hat y, y) = -y \log(\hat y) - (1 - y) \log (1 - \hat y)$
 
 \begin{frame}[fragile]\frametitle{The complete training pipeline}
 \begin{enumerate}
-  \item<+-> Initialise the model parameters $\bm\theta$ and the optimiser state.
-  \item<+-> Draw a minibatch $(\bm X,\bm y)$ and run the forward pass:
+  \item Initialise the model parameters $\bm\theta$ and the optimiser state.
+  \item Draw a minibatch $(\bm X,\bm y)$ and run the forward pass:
   \[
     \hat{\bm y}=f(\bm X;\bm\theta),
     \qquad
     \mathcal L=\frac{1}{B}\sum_{i=1}^{B}\ell(\hat{\bm y}_i,\bm y_i).
   \]
-  \item<+-> Use reverse-mode automatic differentiation to compute
+  \item Use reverse-mode automatic differentiation to compute
   $\nabla_{\bm\theta}\mathcal L$.
-  \item<+-> Update the parameters and repeat with another minibatch.
+  \item Update the parameters and repeat with another minibatch.
 \end{enumerate}
 
 \mode<presentation>{\vspace{0.4em}}
@@ -748,8 +750,8 @@ $\ell_{BCE}(\hat y, y) = -y \log(\hat y) - (1 - y) \log (1 - \hat y)$
 
 \begin{frame}\frametitle{Why zero initialisation fails}
 \begin{itemize}
-  \item<+-> Suppose every hidden unit in a layer starts with the same incoming weights and bias.
-  \item<+-> The units compute the same activation and receive the same gradient:
+  \item Suppose every hidden unit in a layer starts with the same incoming weights ($\bm w$) and bias.
+  \item<1-> The units compute the same activation $h$ and receive the same gradient:
   \[
     \bm w_j=\bm w_k
     \quad\Longrightarrow\quad
@@ -757,12 +759,13 @@ $\ell_{BCE}(\hat y, y) = -y \log(\hat y) - (1 - y) \log (1 - \hat y)$
     \quad\text{and}\quad
     \nabla_{\bm w_j}\mathcal L=\nabla_{\bm w_k}\mathcal L.
   \]
-  \item<+-> An update preserves this equality. The units remain copies of one another, so the layer cannot learn distinct features.
-  \item<+-> Random weight initialisation breaks this symmetry.
+  \item<1-> An update preserves this equality. The units remain copies of one another, so the layer cannot learn distinct features.
+  \item<2-> Random weight initialisation breaks this symmetry.
   \begin{itemize}
     \item Biases may still be initialised to zero because the random weights have already broken the symmetry.
   \end{itemize}
-  \item<+-> With ReLU, zero pre-activations are especially problematic because PyTorch uses a derivative of zero at the origin.
+  \mode<article>{
+  \item With ReLU, zero pre-activations are especially problematic because PyTorch uses a derivative of zero at the origin.}
 \end{itemize}
 \end{frame}
 
@@ -770,19 +773,19 @@ $\ell_{BCE}(\hat y, y) = -y \log(\hat y) - (1 - y) \log (1 - \hat y)$
 
 \begin{frame}\frametitle{The scale of the initial weights matters}
 \begin{itemize}
-  \item<+-> Each layer transforms the scale of its inputs. Let $h^{(r)}$ denote an activation after layer $r$, and define its second moment as
+  \item<1-> Each layer transforms the scale of its inputs. Let $h^{(r)}$ denote an activation after layer $r$, and define its second moment as
   \[
     q^{(r)}=\mathbb E[(h^{(r)})^2],
     \qquad
     q^{(r)}\approx c\,q^{(r-1)}.
   \]
-  \item<+-> Across a network of depth $D$:
+  \item<2-> Across a network of depth $D$:
   \[
     q^{(D)}\approx c^D q^{(0)}.
   \]
-  \item<+-> If $c=0.5$, then after 20 layers the signal is scaled by about $10^{-6}$.
-  \item<+-> If $c=2$, the same network amplifies it by about $10^6$.
-  \item<+-> Backpropagation has the same repeated-multiplication problem. We want activations and gradients to stay at a useful scale.
+  \item<3-> If $c=0.5$, then after 20 layers the signal is scaled by about $10^{-6}$.
+  \item<3-> If $c=2$, the same network amplifies it by about $10^6$.
+  \item<3-> Backpropagation has the same repeated-multiplication problem. We want activations and gradients to stay at a useful scale.
 \end{itemize}
 \end{frame}
 
@@ -795,16 +798,16 @@ For one output of a linear layer,
 \]
 
 \begin{itemize}
-  \item<+-> Assume the inputs and weights are independent, zero-centred, and identically distributed.
-  \item<+-> If $\operatorname{Var}[w_{ji}]=\sigma_w^2$ and
+  \item<1-> Assume the inputs and weights are independent, zero-centred, and identically distributed.
+  \item<2-> If $\operatorname{Var}[w_{ji}]=\sigma_w^2$ and
   $\operatorname{Var}[x_i]=q$, then
   \[
     \operatorname{Var}[z_j]
     =n_{\mathrm{in}}\,\sigma_w^2 q.
   \]
-  \item<+-> Preserving the forward variance suggests
+  \item<2-> Preserving the forward variance suggests
   $\sigma_w^2\approx 1/n_{\mathrm{in}}$.
-  \item<+-> Applying the same argument to the backward pass suggests
+  \item<3-> Applying the same argument to the backward pass suggests
   $\sigma_w^2\approx 1/n_{\mathrm{out}}$.
 \end{itemize}
 \end{frame}
@@ -813,13 +816,13 @@ For one output of a linear layer,
 
 \begin{frame}\frametitle{Xavier and Glorot initialisation}
 \begin{itemize}
-  \item<+-> When $n_{\mathrm{in}}\neq n_{\mathrm{out}}$, one weight variance cannot exactly preserve scale in both directions.
-  \item<+-> Xavier initialisation uses the compromise
+  \item<1-> When $n_{\mathrm{in}}\neq n_{\mathrm{out}}$, one weight variance cannot exactly preserve scale in both directions.
+  \item<1-> Xavier initialisation uses the compromise
   \[
     \operatorname{Var}[w]
     =\frac{2}{n_{\mathrm{in}}+n_{\mathrm{out}}}.
   \]
-  \item<+-> Common forms are
+  \item<2-> Common forms are
   \[
     w\sim\mathcal N\left(0,\frac{2}{n_{\mathrm{in}}+n_{\mathrm{out}}}\right)
   \]
@@ -830,23 +833,23 @@ For one output of a linear layer,
       \sqrt{\frac{6}{n_{\mathrm{in}}+n_{\mathrm{out}}}}
     \right].
   \]
-  \item<+-> This reasoning fits linear activations and tanh near its approximately linear region.
+  \item<2-> This reasoning fits linear activations and tanh near its approximately linear region.
 \end{itemize}
 \end{frame}
 
 %-------------------------------------------------------------%
 
 \begin{frame}\frametitle{Why Xavier under-scales ReLU networks}
-Let $q^{(r)}=\mathbb E[(h^{(r)})^2]$. If the pre-activations are symmetric around zero, then
+Let $q^{(r)}=\mathbb E[(h^{(r)})^2]$. If the pre-activations $z$ are symmetric around zero, then
 \[
   \mathbb E[\ReLU(z)^2]
   =\frac{1}{2}\mathbb E[z^2].
 \]
 
 \begin{itemize}
-  \item<+-> With equal fan-in and fan-out, Xavier gives
+  \item<1-> With equal fan-in and fan-out, Xavier gives
   $\operatorname{Var}[w]\approx 1/n_{\mathrm{in}}$.
-  \item<+-> A ReLU layer therefore gives approximately
+  \item<2-> A ReLU layer therefore gives approximately
   \[
     q^{(r)}
     \approx
@@ -854,7 +857,7 @@ Let $q^{(r)}=\mathbb E[(h^{(r)})^2]$. If the pre-activations are symmetric aroun
     n_{\mathrm{in}}\operatorname{Var}[w]q^{(r-1)}
     \approx\frac{1}{2}q^{(r-1)}.
   \]
-  \item<+-> Repeated ReLU layers can shrink the activation scale by roughly
+  \item<2-> Repeated ReLU layers can shrink the activation scale by roughly
   $2^{-D}$. The backward pass loses a similar factor because only the active ReLUs transmit gradients.
 \end{itemize}
 \end{frame}
@@ -863,11 +866,11 @@ Let $q^{(r)}=\mathbb E[(h^{(r)})^2]$. If the pre-activations are symmetric aroun
 
 \begin{frame}\frametitle{He and Kaiming initialisation}
 \begin{itemize}
-  \item<+-> He initialisation compensates for the factor of $\frac{1}{2}$ introduced by ReLU:
+  \item He initialisation compensates for the factor of $\frac{1}{2}$ introduced by ReLU:
   \[
     \operatorname{Var}[w]=\frac{2}{n_{\mathrm{in}}}.
   \]
-  \item<+-> Now the activation second moment is approximately preserved:
+  \item Now the activation second moment is approximately preserved:
   \[
     q^{(r)}
     \approx
@@ -875,14 +878,15 @@ Let $q^{(r)}=\mathbb E[(h^{(r)})^2]$. If the pre-activations are symmetric aroun
     n_{\mathrm{in}}\frac{2}{n_{\mathrm{in}}}q^{(r-1)}
     =q^{(r-1)}.
   \]
-  \item<+-> Common choices are
+  \item<2-> Common choices are
   \[
     w\sim\mathcal N\left(0,\frac{2}{n_{\mathrm{in}}}\right)
     \quad\text{or}\quad
     w\sim\mathcal U\left[-\sqrt{\frac{6}{n_{\mathrm{in}}}},
                            \sqrt{\frac{6}{n_{\mathrm{in}}}}\right].
   \]
-  % \item<+-> The correct gain depends on the activation. Leaky ReLU, for example, also passes part of the negative signal.
+  \mode<article>{
+  \item<2-> The correct gain depends on the activation. Leaky ReLU, for example, also passes part of the negative signal.}
 \end{itemize}
 \end{frame}
 
@@ -890,18 +894,18 @@ Let $q^{(r)}=\mathbb E[(h^{(r)})^2]$. If the pre-activations are symmetric aroun
 
 \begin{frame}[fragile]\frametitle{Bias initialisation and PyTorch defaults}
 \begin{itemize}
-  \item<+-> Hidden-layer biases can usually start at zero. Random weights already break the symmetry between units.
-  \item<+-> An output bias can encode a useful prior. For binary classification with positive rate $p$:
+  \item Hidden-layer biases can usually start at zero. Random weights already break the symmetry between units.
+  \item An output bias can encode a useful prior. For binary classification with positive rate $p$:
   \[
     b=\log\frac{p}{1-p}.
   \]
-  \item<+-> \texttt{nn.Linear} currently draws its weights and biases uniformly from
+  \item<1-> \texttt{nn.Linear} currently draws its weights and biases uniformly from
   \[
     \left[-\frac{1}{\sqrt{n_{\mathrm{in}}}},
            \frac{1}{\sqrt{n_{\mathrm{in}}}}\right].
   \]
   This historical default is not the standard He initialisation for a ReLU layer.
-  \item<+-> Initialise explicitly when the activation assumption matters:
+  \item<2-> Initialise explicitly when the activation assumption matters:
   \begin{center}
     \texttt{nn.init.kaiming\_normal\_(layer.weight, nonlinearity="relu")}\\
     \texttt{nn.init.zeros\_(layer.bias)}
@@ -937,8 +941,8 @@ During each forward pass. BatchNorm and LayerNorm use different statistics. \\
 
 \mode<presentation>{\vspace{0.7em}}
 \begin{itemize}
-  \item These mechanisms complement one another. Normalisation does not make careful data scaling or sensible initialisation irrelevant.
-  \item We will return to internal normalisation in the practical training lecture.
+  \item These mechanisms work together. Normalisation does not make careful data scaling or sensible initialisation irrelevant.
+  \item We will return to internal normalisation in later lectures.
 \end{itemize}
 \end{frame}
 
