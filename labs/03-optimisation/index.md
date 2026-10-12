@@ -15,8 +15,11 @@ _[Jonathon Hare & Ethan Harris, 17th Feb 2020; updated 22nd Sep 2026](https://gi
 
 - 20200217: Initial version
 - 20260922: Compatibility, link, and wording audit for the new AICE modules
+- 20261012: Fixes from Damian added
 
 ## Acknowledgements
+
+Thanks to Damian Smith for making updates for 2026.
 
 ## Introduction 
 
