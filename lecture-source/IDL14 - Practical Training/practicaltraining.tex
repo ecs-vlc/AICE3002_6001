@@ -513,8 +513,8 @@ Useful summaries for each layer include:
     \item If this fails, simplify the model and inspect its activations, gradients, and parameter updates.
     \item If this works, restore the full training pipeline one component at a time.
   \end{itemize}
-  \item \textbf{Find the first unhealthy signal.} Identify the layer or training step where values vanish, explode, or become non-finite.
-  \item \textbf{Separate training from generalisation.} If training succeeds but validation does not, investigate the data split, distribution, and regularisation.
+  \item \textbf{Find the first damaging signal.} Identify the layer or training step where values vanish, explode, or become NaN or inf.
+  \item \textbf{Separate training from generalisation.} If training succeeds but validation does not, investigate the data split, distribution, pre-processing and regularisation.
 \end{enumerate}
 
 \begin{block}{Working method}
