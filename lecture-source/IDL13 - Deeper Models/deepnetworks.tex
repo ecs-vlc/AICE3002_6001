@@ -307,19 +307,19 @@ $\implies$ simple neural networks can represent a wide variety of interesting fu
 %-------------------------------------------------------------%
 
 \begin{frame}\frametitle{Residual Gradient Flow}
-For a residual block
+A residual block computes
 \[
-  \bm y = \bm x + F(\bm x;\bm\theta),
+  \bm y = \bm x + F(\bm x;\bm\theta) \;.
 \]
-the Jacobian of the block is
+If $J_F(\bm x)$ denotes the Jacobian of $F$ evaluated at $\bm x$, then the Jacobian of the block is
 \[
   \frac{\partial \bm y}{\partial \bm x} = I + J_F(\bm x).
 \]
-Therefore, for a scalar loss $L$ and column-vector gradients,
+For a scalar loss $L$ and column-vector gradients, backprop computes $\nabla_{\bm \theta}L$ to update the parameters and $\nabla_{\bm x}L$ to propagate the gradient to earlier layers:
 \[
   \nabla_{\bm x}L
-  = \left(I + J_F(\bm x)\right)^T \nabla_{\bm y}L
-  = \nabla_{\bm y}L + J_F(\bm x)^T\nabla_{\bm y}L.
+  = \nabla_{\bm y}L
+  + \underbrace{J_F(\bm x)^T\nabla_{\bm y}L}_{\text{VJP through }F}.
 \]
 \begin{itemize}
   \item The gradient has a direct identity path as well as the path through $F$.
