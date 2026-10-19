@@ -381,7 +381,7 @@ For a scalar loss $L$ and column-vector gradients, backprop computes $\nabla_{\b
 \begin{itemize}
 \item We define a random binary mask $\bm m^{(l)}$ for the activations in layer $l$. Each element is sampled from a Bernoulli distribution with $P(m_i^{(l)}=1)=p$, where $p$ is the \emph{keep probability}. A new mask is sampled on each training forward pass. \pause
 \item In \texttt{torch.nn.Dropout}, the argument \texttt{p} is instead the \emph{drop probability}, so the keep probability is $1-p$. \pause
-\item The forward pass of a Dropout layer (function) during \textbf{training} is given by $f(\bm x) = \bm x \odot \bm m / p$.
+\item The forward pass of a Dropout layer (function) during \textbf{training} is given by $f(\bm x) = \bm x \odot \bm m / p$. \pause
 \item The forward pass of a Dropout layer (function) during \textbf{inference} is given by $f(\bm x) = \bm x$. \pause
 \item This can be applied to any layer(s) of the network \textit{except the output layer!} 
 \item It's not common to put it everywhere; just a couple of select places (empirically chosen). \pause
