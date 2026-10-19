@@ -263,11 +263,11 @@ $\implies$ simple neural networks can represent a wide variety of interesting fu
 
 \begin{frame}\frametitle{What are the problems?} 
 \begin{itemize}
-  \item<+-> Learnability is still hard
+  \item<1-> Learnability is still hard
   \begin{itemize}
-    \item<+-> Problems of gradient flow
-    \item<+-> Horrible symmetries in the loss landscape
-    \item<+-> Overfitting
+    \item<2-> Problems of gradient flow
+    \item<2-> Horrible symmetries in the loss landscape
+    \item<2-> Overfitting
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -275,8 +275,8 @@ $\implies$ simple neural networks can represent a wide variety of interesting fu
 %-------------------------------------------------------------%
 \begin{frame}{pause}\frametitle{Vanishing and Exploding Gradients}
 \begin{itemize}
-\item The vanishing and exploding gradient problem is a difficulty found in training NN with gradient-based learning methods and backpropagation.  \pause
-\item In training, the gradient may become vanishingly small (or large), effectively preventing the weight from changing its value (or exploding in value). \pause
+\item The vanishing and exploding gradient problem is a difficulty found in training NN with gradient-based learning methods and backpropagation.
+\item In training, the gradient may become vanishingly small (or large), effectively preventing the weight from changing its value (or exploding in value).
 \item This leads to the neural network not being able to train. \pause
 \item This issue affects many-layered networks (feed-forward), as well as recurrent networks. \pause
 \item Adaptive optimisers can rescale small parameter gradients, but they cannot recover information lost through repeated poorly conditioned Jacobians.
@@ -284,9 +284,9 @@ $\implies$ simple neural networks can represent a wide variety of interesting fu
 \end{frame}
 %-------------------------------------------------------------%
 
-\begin{frame}{pause}\frametitle{Issues with Going Deep}
-\centering\includegraphics[width=10cm]{deep.pdf}
-\end{frame}
+% \begin{frame}{pause}\frametitle{Issues with Going Deep}
+% \centering\includegraphics[width=10cm]{deep.pdf}
+% \end{frame}
 %-------------------------------------------------------------%
 
 \begin{frame}{pause}\frametitle{Residual Connections}
@@ -295,7 +295,7 @@ $\implies$ simple neural networks can represent a wide variety of interesting fu
 \item One of the most effective ways to make very deep networks trainable is to use residual neural networks (ResNets)\footnote{K. He, X. Zhang, S. Ren and J. Sun, "Deep Residual Learning for Image Recognition," CVPR, Las Vegas, NV, 2016, pp. 770-778.}. \pause
 \item ResNets are artificial neural networks that use {\em skip connections} to jump over  layers. \pause
 \item The skip path contributes an identity term to the backward Jacobian, providing a direct route for the gradient. \pause
-\item This is not the full story: skip connections also change the optimisation geometry and the functions that are easy to learn.
+\item This is not the full story: skip connections also change the optimisation geometry and symmetries.
 \end{itemize}
 \end{frame}
 %-------------------------------------------------------------%
@@ -353,9 +353,9 @@ For a scalar loss $L$ and column-vector gradients, backprop computes $\nabla_{\b
 
 \begin{frame}{pause}\frametitle{Dropout}
 \begin{itemize}
-\item Dropout is a form of regularisation \pause
+\item Dropout is a form of regularisation
 \item The key idea in dropout is to randomly drop neurons, including all of the connections, from the neural network during training. \pause
-\item Motivation: averaging predictions from several models often improves generalisation. \pause
+\item Motivation: averaging predictions from several models often improves generalisation.
 \begin{itemize}
   \item Training many networks independently is expensive.
   \item Dropout samples many overlapping subnetworks that share parameters.
@@ -383,7 +383,7 @@ For a scalar loss $L$ and column-vector gradients, backprop computes $\nabla_{\b
 \item In \texttt{torch.nn.Dropout}, the argument \texttt{p} is instead the \emph{drop probability}, so the keep probability is $1-p$. \pause
 \item The forward pass of a Dropout layer (function) during \textbf{training} is given by $f(\bm x) = \bm x \odot \bm m / p$.
 \item The forward pass of a Dropout layer (function) during \textbf{inference} is given by $f(\bm x) = \bm x$. \pause
-\item This can be applied to any layer(s) of the network \textit{except the output layer!} \pause
+\item This can be applied to any layer(s) of the network \textit{except the output layer!} 
 \item It's not common to put it everywhere; just a couple of select places (empirically chosen). \pause
 \item The gradient (during training) is simply the hadamard product of the incoming gradient with $\bm m / p$.
 % \item For layers, $l = 1$  to  $L-1$, for the forward pass of backpropagation, we then compute 
