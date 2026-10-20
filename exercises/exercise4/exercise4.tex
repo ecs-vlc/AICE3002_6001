@@ -36,7 +36,7 @@ We've implemented a fairly basic sequence-to-sequence model for a translation ta
 
 Each line consists of an input sequence left of the \verb_|_ character, and output sequence on the right. The \verb_^_ characters represent SOS (Start Of Sequence) tokens, and \$ represents EOS (End Of Sequence). 
 
-The code and data is available to you in a colab notebook here: \url{https://tinyurl.com/seq-2-seq}. The notebook defines an LSTM encoder-decoder model. Most of the implementation is complete, but the \texttt{forward} method of the \texttt{Encoder} has been omitted. The encoder should embed the input, pass it through its LSTM, and return the final hidden and cell states. Its sequence of LSTM outputs is not used by this model.
+The code and data is available to you in a colab notebook here: \url{https://tinyurl.com/idl-seq2seq}. The notebook defines an LSTM encoder-decoder model. Most of the implementation is complete, but the \texttt{forward} method of the \texttt{Encoder} has been omitted. The encoder should embed the input, pass it through its LSTM, and return the final hidden and cell states. Its sequence of LSTM outputs is not used by this model.
 
 \begin{tcolorbox}[title=1.1 Complete and train the recurrent model (3 marks)]
 Complete the encoder and train the model. Include the short code snippet you added, plot the training and validation loss curves, and report the final losses. Briefly explain the shapes and roles of the hidden and cell states passed from encoder to decoder.
