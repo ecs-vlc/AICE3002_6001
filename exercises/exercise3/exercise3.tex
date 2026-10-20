@@ -87,7 +87,7 @@ val_data = MyDataset(size=500, random_offset=33333)
 test_data = MyDataset(size=500, random_offset=99999)
 \end{lstlisting}
 
-Train each model below using Adam, shuffled batches of 128 items, and the same fixed random seed and training budget. State the loss function and evaluation measure you use. Use validation data while developing your method and reserve the test data for the final comparison.
+Train each model below using Adam with a learning rate of 0.001, shuffled batches of 128 items, and the same fixed random seed and training budget. State the loss function and evaluation measure you use. Use validation data while developing your method and reserve the test data for the final comparison.
 
 \begin{tcolorbox}[title=1.1 A simple CNN baseline (2 marks)]
 Implement and train the following model:
@@ -138,10 +138,10 @@ Explain what this is doing and why it might change performance, relating your an
 
 \section{Transfer learning}
 
-In the transfer-learning lab you used an ImageNet-pretrained ResNet to solve a small boat-classification problem. One approach fine-tuned a neural-network classifier; another extracted fixed features and trained a separate linear classifier or SVM.
+In the transfer-learning lab you used an ImageNet-pretrained ResNet to solve a small boat-classification problem while keeping the pretrained backbone fixed. You trained a new neural-network classification head and also extracted fixed features for a separate linear classifier or SVM. In this investigation you will compare the fixed-feature approach with genuine fine-tuning, in which at least part of the pretrained backbone is updated.
 
 \begin{tcolorbox}[title=2.1 Describe and justify the two methods (2 marks)]
-Describe how you constructed the fine-tuning and fixed-feature approaches. State which parameters were trainable, how inputs were preprocessed, how models were selected, and why those choices were reasonable for the amount of available data.
+Describe how you constructed the fine-tuning and fixed-feature approaches. For fine-tuning, at least one stage of the pretrained backbone must be trainable, rather than only the new classification head. State which parameters were trainable, how inputs were preprocessed, how models were selected, and why those choices were reasonable for the amount of available data.
 \end{tcolorbox}
 
 \begin{tcolorbox}[title=2.2 Compare effectiveness and cost (2 marks)]
