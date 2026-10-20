@@ -25,10 +25,18 @@ This is the final individual investigation in the laboratory portfolio. It shoul
 You should write up your results, answers, and findings succinctly, using \emph{no more than two sides of A4} for this investigation. Code need not be reproduced in full: include only short snippets needed to explain your method. This exercise is worth 10 marks (10\% of the module).
 
 \section{A recurrent sequence-to-sequence model}
+Sequence-to-Sequence modelling allows one (potentially variable length) input sequence to be translated to another output sequence (potentially of a different length) by transforming the input sequence into a fixed length vector, and using this to drive the generation of the output sequence. There are lots of algorithms and models that can achieve this, but a classic approach is the model proposed by Sutskever et al (\url{https://arxiv.org/abs/1409.3215}), which uses LSTMs to encode the input to a pair of vectors (the final hidden and cell states), and LSTMs to decode the pair of vectors into the desired output. Sequence-to-sequence models gained popularity as (then) state-of-the-art methods for language translation. 
 
-The supplied dataset contains pairs of Morse-code and alphabetic sequences. The symbols \verb|^| and \verb|$| mark the start and end of a sequence, while \verb|_| is used for padding. Training examples contain short fragments; the target is presented in reverse order to the recurrent decoder.
+We've implemented a fairly basic sequence-to-sequence model for a translation task and created a dataset from which to train which has the following form:
 
-The supplied notebook defines an LSTM encoder--decoder model. Most of the implementation is complete, but the \texttt{forward} method of the \texttt{Encoder} has been omitted. The encoder should embed the input, pass it through its LSTM, and return the final hidden and cell states. Its sequence of LSTM outputs is not used by this model.
+\begin{verbatim}
+^ .--. .-. . ..-. .- -.-. . / $|^preface $
+^ . / ... ..- .--. .--. --- ... $|^e suppos$
+\end{verbatim}
+
+Each line consists of an input sequence left of the \verb_|_ character, and output sequence on the right. The \verb_^_ characters represent SOS (Start Of Sequence) tokens, and \$ represents EOS (End Of Sequence). 
+
+The code and data is available to you in a colab notebook here: \url{https://tinyurl.com/seq-2-seq}. The notebook defines an LSTM encoder-decoder model. Most of the implementation is complete, but the \texttt{forward} method of the \texttt{Encoder} has been omitted. The encoder should embed the input, pass it through its LSTM, and return the final hidden and cell states. Its sequence of LSTM outputs is not used by this model.
 
 \begin{tcolorbox}[title=1.1 Complete and train the recurrent model (3 marks)]
 Complete the encoder and train the model. Include the short code snippet you added, plot the training and validation loss curves, and report the final losses. Briefly explain the shapes and roles of the hidden and cell states passed from encoder to decoder.
@@ -49,7 +57,7 @@ Then use the model to \texttt{.- -. ... .-- . .-. / - .... . / ..-. --- .-.. .-.
 The examples used for training contain only a limited range of sequence lengths. A model can perform well on a random held-out subset of these examples without learning an algorithm that generalises to substantially longer sequences.
 
 \begin{tcolorbox}[parbox=false,title=2.1 Test length generalisation (3 marks)]
-Construct evaluation sets grouped by input length, including at least two lengths beyond those used during training. Plot token accuracy and exact-sequence accuracy against input length. Include representative successful and unsuccessful decoded sequences.
+Construct validation sets grouped by input length, including at least two lengths beyond those used during training. Plot token accuracy and exact-sequence accuracy against input length. Include representative successful and unsuccessful decoded sequences.
 
 Explain the behaviour you observe. Your answer should distinguish exposure to particular text fragments from exposure to particular sequence lengths, and should discuss how errors made early by an autoregressive decoder can affect later outputs.
 \end{tcolorbox}
