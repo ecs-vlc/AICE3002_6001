@@ -13,7 +13,11 @@
   \usepackage{parskip}
   \usepackage[hidelinks]{hyperref}
 \else
-  \documentclass[\beamerclass,ignorenonframetext]{beamer}
+  \ifdefined\includeexternalpdfpages
+    \documentclass[\beamerclass]{beamer}
+  \else
+    \documentclass[\beamerclass,ignorenonframetext]{beamer}
+  \fi
 \fi
 
 \usepackage{pgfpages}
@@ -29,6 +33,7 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{tikz}
+\usepackage{pdfpages}
 
 \usetheme{Copenhagen}
 \useoutertheme{infolines}

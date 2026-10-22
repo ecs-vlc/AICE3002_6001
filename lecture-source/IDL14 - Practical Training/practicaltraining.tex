@@ -1,6 +1,7 @@
 \newcommand{\lecturetitle}{Practical Training of Deep Networks}
 \newcommand{\lecturesubtitle}{Normalisation, stabilisation, and diagnosis}
 \newcommand{\covertext}{Make\\training\\work}
+\newcommand{\includeexternalpdfpages}{}
 
 \input{../idl-slides-preamble.tex}
 
@@ -315,110 +316,115 @@ Use them to propose the next measurement or design a controlled experiment.
 \end{block}
 \end{frame}
 
+% %-------------------------------------------------------------
+
+% \begin{frame}{Training improves while validation worsens}
+% \definecolor{traincurve}{RGB}{37,91,160}
+% \definecolor{valcurve}{RGB}{222,112,43}
+% \begin{columns}[T]
+% \begin{column}{0.49\textwidth}
+% \centering
+% \textbf{Loss}\\[0.2em]
+% \begin{tikzpicture}[x=0.52cm,y=0.45cm]
+%   \draw[->] (0,0) -- (8.4,0);
+%   \draw[->] (0,0) -- (0,5.1);
+%   \node[anchor=north] at (4.1,-0.25) {\scriptsize epoch};
+%   \draw[draw=traincurve,very thick]
+%     plot[smooth] coordinates {
+%       (0.2,4.5) (1,3.6) (2,2.8) (3,2.2) (4,1.7)
+%       (5,1.3) (6,1.0) (7,0.75) (8,0.55)
+%     };
+%   \draw[draw=valcurve,very thick]
+%     plot[smooth] coordinates {
+%       (0.2,4.6) (1,3.7) (2,3.0) (3,2.5) (4,2.35)
+%       (5,2.45) (6,2.7) (7,3.05) (8,3.45)
+%     };
+%   \draw[draw=traincurve,very thick] (0.5,4.8) -- (1.0,4.8);
+%   \node[anchor=west] at (1.1,4.8) {\scriptsize training};
+%   \draw[draw=valcurve,very thick] (3.4,4.8) -- (3.9,4.8);
+%   \node[anchor=west] at (4.0,4.8) {\scriptsize validation};
+% \end{tikzpicture}
+% \end{column}
+% \begin{column}{0.49\textwidth}
+% \centering
+% \textbf{Accuracy}\\[0.2em]
+% \begin{tikzpicture}[x=0.52cm,y=0.45cm]
+%   \draw[->] (0,0) -- (8.4,0);
+%   \draw[->] (0,0) -- (0,5.1);
+%   \node[anchor=north] at (4.1,-0.25) {\scriptsize epoch};
+%   \draw[draw=traincurve,very thick]
+%     plot[smooth] coordinates {
+%       (0.2,1.0) (1,1.8) (2,2.6) (3,3.15) (4,3.6)
+%       (5,3.95) (6,4.2) (7,4.4) (8,4.55)
+%     };
+%   \draw[draw=valcurve,very thick]
+%     plot[smooth] coordinates {
+%       (0.2,0.9) (1,1.7) (2,2.45) (3,2.95) (4,3.15)
+%       (5,3.20) (6,3.18) (7,3.14) (8,3.10)
+%     };
+%   \draw[draw=traincurve,very thick] (0.5,4.8) -- (1.0,4.8);
+%   \node[anchor=west] at (1.1,4.8) {\scriptsize training};
+%   \draw[draw=valcurve,very thick] (3.4,4.8) -- (3.9,4.8);
+%   \node[anchor=west] at (4.0,4.8) {\scriptsize validation};
+% \end{tikzpicture}
+% \end{column}
+% \end{columns}
+
+% \begin{itemize}
+%   \item Where does overfitting appear to begin? Would training for longer help?
+%   \item Why can validation loss worsen while validation accuracy barely changes?
+%   \item What would you save if you wanted the best model from this run?
+% \end{itemize}
+% \end{frame}
+
+% %-------------------------------------------------------------
+
+% \begin{frame}{A sudden spike}
+% \definecolor{traincurve}{RGB}{37,91,160}
+% \definecolor{valcurve}{RGB}{222,112,43}
+% \begin{columns}[T]
+% \begin{column}{0.57\textwidth}
+% \centering
+% \begin{tikzpicture}[x=0.64cm,y=0.58cm]
+%   \draw[->] (0,0) -- (8.5,0);
+%   \draw[->] (0,0) -- (0,5.3);
+%   \node[anchor=north] at (4.2,-0.25) {epoch};
+%   \node[rotate=90] at (-0.45,2.6) {loss};
+%   \draw[draw=traincurve,very thick]
+%     plot[smooth] coordinates {
+%       (0.2,4.4) (1,3.6) (2,3.0) (3,2.5) (4,2.1)
+%       (5,1.8) (5.8,1.65) (6.0,4.8) (6.3,2.4) (7,1.55) (8,1.35)
+%     };
+%   \draw[draw=valcurve,very thick]
+%     plot[smooth] coordinates {
+%       (0.2,4.6) (1,3.8) (2,3.25) (3,2.8) (4,2.45)
+%       (5,2.2) (6,3.35) (7,2.15) (8,2.05)
+%     };
+%   \draw[draw=traincurve,very thick] (0.5,4.95) -- (1.1,4.95);
+%   \node[anchor=west] at (1.2,4.95) {\scriptsize training};
+%   \draw[draw=valcurve,very thick] (3.7,4.95) -- (4.3,4.95);
+%   \node[anchor=west] at (4.4,4.95) {\scriptsize validation};
+% \end{tikzpicture}
+% \end{column}
+% \begin{column}{0.39\textwidth}
+% \begin{itemize}
+%   \item Is this one unusual minibatch or a persistent change in training state?
+%   \item What else would you plot against the same horizontal axis?
+%   \item Which saved artefacts would let you reproduce the event?
+% \end{itemize}
+% \end{column}
+% \end{columns}
+
+% \begin{block}{Possible places to look}
+% Learning rate, gradient norms, batch identifiers, augmentation, numerical precision, checkpoint restoration, and train/eval mode.
+% \end{block}
+% \end{frame}
+
 %-------------------------------------------------------------
-
-\begin{frame}{Training improves while validation worsens}
-\definecolor{traincurve}{RGB}{37,91,160}
-\definecolor{valcurve}{RGB}{222,112,43}
-\begin{columns}[T]
-\begin{column}{0.49\textwidth}
-\centering
-\textbf{Loss}\\[0.2em]
-\begin{tikzpicture}[x=0.52cm,y=0.45cm]
-  \draw[->] (0,0) -- (8.4,0);
-  \draw[->] (0,0) -- (0,5.1);
-  \node[anchor=north] at (4.1,-0.25) {\scriptsize epoch};
-  \draw[draw=traincurve,very thick]
-    plot[smooth] coordinates {
-      (0.2,4.5) (1,3.6) (2,2.8) (3,2.2) (4,1.7)
-      (5,1.3) (6,1.0) (7,0.75) (8,0.55)
-    };
-  \draw[draw=valcurve,very thick]
-    plot[smooth] coordinates {
-      (0.2,4.6) (1,3.7) (2,3.0) (3,2.5) (4,2.35)
-      (5,2.45) (6,2.7) (7,3.05) (8,3.45)
-    };
-  \draw[draw=traincurve,very thick] (0.5,4.8) -- (1.0,4.8);
-  \node[anchor=west] at (1.1,4.8) {\scriptsize training};
-  \draw[draw=valcurve,very thick] (3.4,4.8) -- (3.9,4.8);
-  \node[anchor=west] at (4.0,4.8) {\scriptsize validation};
-\end{tikzpicture}
-\end{column}
-\begin{column}{0.49\textwidth}
-\centering
-\textbf{Accuracy}\\[0.2em]
-\begin{tikzpicture}[x=0.52cm,y=0.45cm]
-  \draw[->] (0,0) -- (8.4,0);
-  \draw[->] (0,0) -- (0,5.1);
-  \node[anchor=north] at (4.1,-0.25) {\scriptsize epoch};
-  \draw[draw=traincurve,very thick]
-    plot[smooth] coordinates {
-      (0.2,1.0) (1,1.8) (2,2.6) (3,3.15) (4,3.6)
-      (5,3.95) (6,4.2) (7,4.4) (8,4.55)
-    };
-  \draw[draw=valcurve,very thick]
-    plot[smooth] coordinates {
-      (0.2,0.9) (1,1.7) (2,2.45) (3,2.95) (4,3.15)
-      (5,3.20) (6,3.18) (7,3.14) (8,3.10)
-    };
-  \draw[draw=traincurve,very thick] (0.5,4.8) -- (1.0,4.8);
-  \node[anchor=west] at (1.1,4.8) {\scriptsize training};
-  \draw[draw=valcurve,very thick] (3.4,4.8) -- (3.9,4.8);
-  \node[anchor=west] at (4.0,4.8) {\scriptsize validation};
-\end{tikzpicture}
-\end{column}
-\end{columns}
-
-\begin{itemize}
-  \item Where does overfitting appear to begin? Would training for longer help?
-  \item Why can validation loss worsen while validation accuracy barely changes?
-  \item What would you save if you wanted the best model from this run?
-\end{itemize}
-\end{frame}
-
-%-------------------------------------------------------------
-
-\begin{frame}{A sudden spike}
-\definecolor{traincurve}{RGB}{37,91,160}
-\definecolor{valcurve}{RGB}{222,112,43}
-\begin{columns}[T]
-\begin{column}{0.57\textwidth}
-\centering
-\begin{tikzpicture}[x=0.64cm,y=0.58cm]
-  \draw[->] (0,0) -- (8.5,0);
-  \draw[->] (0,0) -- (0,5.3);
-  \node[anchor=north] at (4.2,-0.25) {epoch};
-  \node[rotate=90] at (-0.45,2.6) {loss};
-  \draw[draw=traincurve,very thick]
-    plot[smooth] coordinates {
-      (0.2,4.4) (1,3.6) (2,3.0) (3,2.5) (4,2.1)
-      (5,1.8) (5.8,1.65) (6.0,4.8) (6.3,2.4) (7,1.55) (8,1.35)
-    };
-  \draw[draw=valcurve,very thick]
-    plot[smooth] coordinates {
-      (0.2,4.6) (1,3.8) (2,3.25) (3,2.8) (4,2.45)
-      (5,2.2) (6,3.35) (7,2.15) (8,2.05)
-    };
-  \draw[draw=traincurve,very thick] (0.5,4.95) -- (1.1,4.95);
-  \node[anchor=west] at (1.2,4.95) {\scriptsize training};
-  \draw[draw=valcurve,very thick] (3.7,4.95) -- (4.3,4.95);
-  \node[anchor=west] at (4.4,4.95) {\scriptsize validation};
-\end{tikzpicture}
-\end{column}
-\begin{column}{0.39\textwidth}
-\begin{itemize}
-  \item Is this one unusual minibatch or a persistent change in training state?
-  \item What else would you plot against the same horizontal axis?
-  \item Which saved artefacts would let you reproduce the event?
-\end{itemize}
-\end{column}
-\end{columns}
-
-\begin{block}{Possible places to look}
-Learning rate, gradient norms, batch identifiers, augmentation, numerical precision, checkpoint restoration, and train/eval mode.
-\end{block}
-\end{frame}
-
+{
+  \setbeamercolor{background canvas}{bg=}
+  \includepdf[pages=-]{train-curves.pdf}
+}
 %-------------------------------------------------------------
 
 \begin{frame}{Validation looks better than training}
