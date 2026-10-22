@@ -45,7 +45,7 @@ What evidence would distinguish the possible causes?
 \begin{frame}{Sanity checks before a long training run}
 \begin{itemize}
   \item Inspect a minibatch: shapes, dtypes, value ranges, targets, and class frequencies.
-  \item Check the contract between the model output and the loss. For example,
+  \item Check the compatibility between the model output and the loss. For example,
   \texttt{CrossEntropyLoss} expects raw logits and integer class indices.
   \item Verify that every intended parameter receives a finite gradient.
   \item Disable augmentation and regularisation, then overfit one small minibatch.
