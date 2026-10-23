@@ -9,7 +9,7 @@ rdir: '../../'
 
 # Lab 8 - Recurrent Networks, Sequence Prediction and Embeddings
 
-_[Jonathon Hare, 23rd October 2026](https://github.com/ecs-vlc/COMP6258)_
+_[Jonathon Hare, 3rd March 2019; updated 23rd October 2026](https://github.com/ecs-vlc/COMP6258)_
 
 ## Change History
 
