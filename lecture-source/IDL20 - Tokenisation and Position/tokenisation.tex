@@ -1,19 +1,592 @@
 \newcommand{\lecturetitle}{Tokenisation and Positional Representation}
 \newcommand{\lecturesubtitle}{From discrete symbols to contextual representations}
 \newcommand{\covertext}{Represent\\tokens\\in context}
+\newcommand{\lectureauthor}{Jonathon Hare}
+
+\newcommand{\tokenbox}[2][blue!15]{%
+  \tikz[baseline=(tok.base)]{%
+    \node[
+      draw=darkblue,
+      rounded corners=2pt,
+      fill=#1,
+      inner xsep=4pt,
+      inner ysep=2pt
+    ] (tok) {\strut #2};%
+  }%
+}
 
 \input{../idl-slides-preamble.tex}
 
-\frame{\frametitle{Models operate on representations, not raw text}}
-\frame{\frametitle{Words are an unstable unit of representation}}
-\frame{\frametitle{Unknown words expose the vocabulary problem}}
-\frame{\frametitle{Subwords balance coverage and sequence length}}
-\frame{\frametitle{Byte-pair encoding builds a vocabulary by merging}}
-\frame{\frametitle{Token IDs become learned vectors}}
-\frame{\frametitle{Order must be represented explicitly}}
-\frame{\frametitle{Fixed and learned positional representations}}
-\frame{\frametitle{Position interacts with attention}}
-\frame{\frametitle{Context changes what a token represents}}
-\frame{\frametitle{From static embeddings to contextual representations}}
+\begin{frame}{Models operate on representations, not raw text}
+  \begin{center}
+    raw text
+    $\longrightarrow$
+    tokens
+    $\longrightarrow$
+    token IDs
+    $\longrightarrow$
+    vectors
+    $\longrightarrow$
+    model
+  \end{center}
+
+  \vspace{0.8em}
+  \begin{block}{Tokenisation}
+    A deterministic mapping between a string and a sequence of symbols drawn
+    from a finite vocabulary.
+  \end{block}
+
+  The mapping determines what the model can see, how long its inputs are, and
+  which symbols share parameters.
+\end{frame}
+
+\begin{frame}{Tokenisation is a modelling decision}
+  The same string admits many reasonable segmentations:
+
+  \vspace{0.8em}
+  \begin{center}
+    \texttt{unbelievably useful!}
+
+    \vspace{0.8em}
+    \tokenbox{unbelievably} \tokenbox{useful} \tokenbox{!}
+
+    \vspace{0.5em}
+    \tokenbox{un} \tokenbox{believ} \tokenbox{ably}
+    \tokenbox{use} \tokenbox{ful} \tokenbox{!}
+
+    \vspace{0.5em}
+    \tokenbox{u} \tokenbox{n} \tokenbox{b} \tokenbox{e}
+    \tokenbox{l} \tokenbox{i} \tokenbox{e} \tokenbox{v} \ldots
+  \end{center}
+
+  There is no universally correct unit. The useful choice depends on the data,
+  the task, and the computational budget.
+\end{frame}
+
+\begin{frame}{Words are an unstable unit of representation}
+  What counts as one word?
+
+  \begin{itemize}
+    \item \texttt{don't}, \texttt{state-of-the-art}, \texttt{Jon's}
+    \item \texttt{AICE3002/6001}, \texttt{3.14}, \texttt{hello@example.org}
+    \item punctuation, emoji, URLs, code, and hashtags
+    \item languages that do not mark every word boundary with a space
+    \item productive morphology: \texttt{train}, \texttt{trained},
+      \texttt{retraining}, \texttt{trainability}
+  \end{itemize}
+
+  A rule such as ``split on spaces'' is simple, but it does not solve the
+  representation problem.
+\end{frame}
+
+\begin{frame}{Normalisation is not neutral}
+  Before tokenisation, a pipeline may change the string:
+  \begin{itemize}
+    \item Unicode normalisation;
+    \item case folding;
+    \item standardising whitespace or punctuation; and
+    \item replacing URLs, usernames, or numbers with special symbols.
+  \end{itemize}
+
+  Each choice trades sparsity against information:
+  \begin{center}
+    \texttt{US} $\neq$ \texttt{us}
+    \qquad
+    \texttt{Polish} $\neq$ \texttt{polish}
+    \qquad
+    \texttt{1.0} $\neq$ \texttt{1000}
+  \end{center}
+
+  The normaliser and tokenizer are therefore part of the model specification,
+  not incidental data cleaning.
+\end{frame}
+
+\begin{frame}{A vocabulary maps tokens to integer IDs}
+  Let $\mathcal{V}$ be a finite vocabulary. The tokenizer produces
+  \[
+    (t_1,\ldots,t_n)
+    \quad\longrightarrow\quad
+    (i_1,\ldots,i_n),
+    \qquad i_j\in\{0,\ldots,|\mathcal{V}|-1\}.
+  \]
+
+  \begin{center}
+    \begin{tabular}{c|ccccc}
+      token & \texttt{[PAD]} & \texttt{[UNK]} & \texttt{deep} &
+      \texttt{learn} & \texttt{ing} \\ \hline
+      ID & 0 & 1 & 284 & 931 & 47
+    \end{tabular}
+
+    \vspace{0.8em}
+    \texttt{deep learning}
+    $\longrightarrow$
+    \tokenbox{deep} \tokenbox{learn} \tokenbox{ing}
+    $\longrightarrow$
+    $(284,931,47)$
+  \end{center}
+
+  IDs are arbitrary labels. ID 931 is not ``larger'' or more similar than ID 284.
+\end{frame}
+
+\begin{frame}{Special tokens communicate structure}
+  A vocabulary normally reserves symbols that do not correspond directly to a
+  span of ordinary text:
+  \begin{itemize}
+    \item \texttt{[UNK]}: a symbol the vocabulary cannot represent;
+    \item \texttt{[PAD]}: fills unused positions in a batch;
+    \item \texttt{[SOS]} / \texttt{[EOS]}: sequence boundaries;
+    \item \texttt{[SEP]}: separates segments; and
+    \item \texttt{[MASK]}: hides a token for a pretraining objective.
+  \end{itemize}
+
+  Their meaning comes from how the model is trained and how the loss and masks
+  treat them.
+\end{frame}
+
+\begin{frame}{Batches require padding and a length signal}
+  \begin{center}
+    \begin{tabular}{l|ccccc}
+      & 1 & 2 & 3 & 4 & 5 \\ \hline
+      input A & \texttt{deep} & \texttt{learn} & \texttt{ing} &
+        \texttt{[PAD]} & \texttt{[PAD]} \\
+      mask A  & 1 & 1 & 1 & 0 & 0 \\
+      input B & \texttt{sub} & \texttt{word} & \texttt{token} &
+        \texttt{is} & \texttt{ation} \\
+      mask B  & 1 & 1 & 1 & 1 & 1
+    \end{tabular}
+  \end{center}
+
+  Padding makes tensors rectangular. A mask says which positions contain data.
+
+  \begin{alertblock}{Do not infer length from the padding vector}
+    A special embedding for \texttt{[PAD]} does not, by itself, stop later
+    computations from using padded positions.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{A word vocabulary has an open-vocabulary problem}
+  Even a large training corpus will not contain every future word:
+  \begin{itemize}
+    \item names and places;
+    \item new products, slang, and technical terms;
+    \item spelling variants and typing errors; and
+    \item unseen inflections or compounds.
+  \end{itemize}
+
+  Mapping all of them to \texttt{[UNK]} discards their internal structure:
+  \[
+    \begin{aligned}
+      &\texttt{retokenisation},\ \texttt{tokenizer},\ \texttt{tokenised}\\
+      &\hspace{3em}\longrightarrow
+        \texttt{[UNK]},\ \texttt{[UNK]},\ \texttt{[UNK]}.
+    \end{aligned}
+  \]
+\end{frame}
+
+\begin{frame}{Characters provide coverage at the cost of length}
+  A character vocabulary is small and can compose unseen words:
+  \[
+    \texttt{token} \longrightarrow
+    \tokenbox{t}\ \tokenbox{o}\ \tokenbox{k}\ \tokenbox{e}\ \tokenbox{n}.
+  \]
+
+  But:
+  \begin{itemize}
+    \item sequences become much longer;
+    \item the model must learn common fragments repeatedly; and
+    \item a character is not always one byte or one visible glyph.
+  \end{itemize}
+
+  Word tokens reuse whole meanings efficiently; character tokens provide robust
+  coverage. Subword tokenisation aims for a compromise.
+\end{frame}
+
+\begin{frame}{Subwords balance coverage and sequence length}
+  Frequent strings can be single tokens; rarer strings are composed from smaller
+  pieces:
+
+  \begin{center}
+    \tokenbox{train}
+    \qquad
+    \tokenbox{train} \tokenbox{ing}
+    \qquad
+    \tokenbox{re} \tokenbox{train} \tokenbox{ing}
+  \end{center}
+
+  A subword vocabulary:
+  \begin{itemize}
+    \item shares parameters across related surface forms;
+    \item reduces or removes unknown tokens; and
+    \item keeps common expressions shorter than character tokenisation.
+  \end{itemize}
+
+  The pieces need not be linguistically meaningful morphemes: they are learned
+  to represent the training corpus efficiently.
+\end{frame}
+
+\begin{frame}{Byte-pair encoding learns pieces by merging}
+  Start with a base vocabulary of small symbols, then repeatedly:
+  \begin{enumerate}
+    \item count adjacent symbol pairs in the training corpus;
+    \item choose the most frequent pair (using a fixed tie-break rule);
+    \item replace every occurrence of that pair with a new symbol; and
+    \item add the merge to an ordered list of rules.
+  \end{enumerate}
+
+  Stop after reaching a chosen vocabulary size or number of merges.
+
+  \vfill
+  {\tiny Adapted from Sennrich, Haddow and Birch, ``Neural Machine Translation
+  of Rare Words with Subword Units'', 2016.}
+\end{frame}
+
+\begin{frame}{BPE begins with the smallest available symbols}
+  Consider the weighted training vocabulary
+  \[
+    \texttt{play}\!:\!5,\quad
+    \texttt{playing}\!:\!2,\quad
+    \texttt{played}\!:\!2,\quad
+    \texttt{player}\!:\!2.
+  \]
+
+  Initially each word is split into characters (plus a word-boundary marker):
+  \begin{align*}
+    \texttt{play} &\rightarrow \texttt{p l a y </w>} \\
+    \texttt{playing} &\rightarrow \texttt{p l a y i n g </w>}.
+  \end{align*}
+
+  The pairs \texttt{p l}, \texttt{l a}, and \texttt{a y} each occur 11 times.
+  Suppose a deterministic left-to-right tie-break chooses \texttt{p l}.
+\end{frame}
+
+\begin{frame}{A merge creates one new vocabulary item}
+  The first rule replaces \texttt{p l} by \texttt{pl}:
+  \[
+    \texttt{p l a y} \longrightarrow \texttt{pl a y}.
+  \]
+
+  Recount pairs, then continue:
+  \begin{center}
+    \begin{tabular}{c|c|c}
+      step & merge rule & representation of \texttt{playing} \\ \hline
+      0 & --- & \texttt{p l a y i n g} \\
+      1 & \texttt{p + l $\rightarrow$ pl} & \texttt{pl a y i n g} \\
+      2 & \texttt{pl + a $\rightarrow$ pla} & \texttt{pla y i n g} \\
+      3 & \texttt{pla + y $\rightarrow$ play} & \texttt{play i n g}
+    \end{tabular}
+  \end{center}
+
+  The base symbols remain available, so uncommon strings can still be composed.
+\end{frame}
+
+\begin{frame}{Encoding uses the learned rules, not new corpus counts}
+  Once training is complete, freeze the vocabulary and ordered merge rules.
+
+  For an unseen string \texttt{plays}:
+  \[
+    \texttt{p l a y s}
+    \longrightarrow
+    \texttt{pl a y s}
+    \longrightarrow
+    \texttt{pla y s}
+    \longrightarrow
+    \tokenbox{play}\ \tokenbox{s}.
+  \]
+
+  We do \emph{not} choose new merges from the evaluation example. Training and
+  inference must use exactly the same tokenizer.
+
+  \begin{block}{The merge budget controls granularity}
+    More merges give shorter sequences and a larger embedding table; fewer merges
+    give longer sequences and more sharing through small pieces.
+  \end{block}
+\end{frame}
+
+\begin{frame}{BPE is one subword construction, not the definition}
+  \begin{description}
+    \item[BPE] learns an ordered sequence of frequent pair merges.
+    \item[WordPiece] learns a subword vocabulary and commonly encodes using
+      greedy longest matching; BERT uses this family.
+    \item[Unigram LM] assigns probabilities to candidate pieces and chooses a
+      likely segmentation; training prunes pieces from a larger vocabulary.
+  \end{description}
+
+  \vspace{0.4em}
+  Different algorithms can produce different, equally valid segmentations.
+  Always report the actual tokenizer and vocabulary, rather than saying only
+  ``we used subwords''.
+\end{frame}
+
+\begin{frame}{Bytes provide a universal base alphabet}
+  UTF-8 represents text as bytes. Starting from the 256 possible byte values
+  means every input string can be represented without an unknown character.
+
+  \begin{itemize}
+    \item Byte-level BPE merges frequent byte sequences into larger tokens.
+    \item A visible character may occupy several bytes.
+    \item A learned token may include punctuation or a leading space.
+    \item SentencePiece instead exposes whitespace as a symbol and can train BPE
+      or unigram models directly from raw text.
+  \end{itemize}
+
+  \begin{alertblock}{Token $\neq$ word $\neq$ character $\neq$ byte}
+    Token counts should not be interpreted as word counts unless the tokenizer
+    actually uses words.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Vocabulary size and sequence length trade off}
+  \begin{center}
+    \begin{tabular}{l|c|c|c}
+      unit & vocabulary & sequence length & unseen strings \\ \hline
+      word & large & short & problematic \\
+      character & small & long & usually covered \\
+      subword & medium & medium & composed \\
+      byte & 256 base symbols & potentially longest & always covered
+    \end{tabular}
+  \end{center}
+
+  A larger vocabulary increases the parameters in the embedding/output tables.
+  A longer sequence increases the work done by the sequence model.
+
+  Later, self-attention over $n$ positions will require an $n\times n$ matrix:
+  tokenisation can therefore change computational cost substantially.
+\end{frame}
+
+\begin{frame}{Fragmentation is not distributed evenly}
+  A vocabulary reflects the frequencies in the corpus used to learn it.
+
+  \begin{itemize}
+    \item Common languages and domains receive longer, reusable pieces.
+    \item Rare languages, names, and specialist terms may fragment more heavily.
+    \item Under a fixed token limit, heavier fragmentation means less source text
+      fits into the model.
+    \item Changing the tokenizer changes the inputs, compute, and often model
+      quality---even when the architecture is unchanged.
+  \end{itemize}
+
+  Inspect token lengths on the populations and domains that matter for the task;
+  an average over the training corpus can hide important differences.
+\end{frame}
+
+\begin{frame}{The tokenizer is fitted, frozen, and versioned}
+  Vocabulary learning uses data and must respect the experimental design:
+  \begin{itemize}
+    \item learn or select the tokenizer using training data (or a declared
+      external pretraining corpus);
+    \item do not adapt merge rules or vocabulary to the test set;
+    \item fix normalisation, special-token conventions, and maximum length; and
+    \item save the tokenizer with the model checkpoint.
+  \end{itemize}
+
+  For a pretrained model, its embedding table expects the matching tokenizer.
+  Replacing the tokenizer usually changes the meaning and number of its input IDs.
+\end{frame}
+
+\begin{frame}{Token IDs become learned vectors}
+  As in the embeddings lecture, an embedding table
+  $E\in\mathbb{R}^{|\mathcal{V}|\times d}$ maps each ID to a vector:
+  \[
+    i_j \longmapsto \mathbf{e}_j = E[i_j]\in\mathbb{R}^{d}.
+  \]
+
+  For a batch of ID sequences with shape $B\times n$, an embedding lookup returns
+  a tensor with shape
+  \[
+    B\times n\times d.
+  \]
+
+  The lookup is differentiable with respect to the selected rows of $E$; the
+  integer IDs themselves are not learned or differentiated.
+\end{frame}
+
+\begin{frame}{Token embeddings alone do not encode order}
+  A lookup returns one vector per token, but the vector for \texttt{dog} is the
+  same wherever it occurs:
+  \begin{center}
+    \texttt{dog bites person}
+    \qquad versus\qquad
+    \texttt{person bites dog}
+  \end{center}
+
+  If a model treats these vectors as an unordered set, permuting the tokens
+  merely permutes the outputs.
+
+  Recurrence encodes order through sequential processing; convolutions use
+  ordered local neighbourhoods.
+
+  \begin{block}{No explicit positional encoding (NoPE)}
+    Some causal decoder-only Transformers omit position embeddings. Their mask
+    exposes a different number of predecessors at each position, allowing the
+    model to learn implicit position information.
+  \end{block}
+
+  A fully bidirectional self-attention layer with no position-dependent signal
+  remains permutation equivariant.
+
+  \vfill
+  {\tiny Haviv et al., ``Transformer Language Models without Positional
+  Encodings Still Learn Positional Information'', 2022.}
+\end{frame}
+
+\begin{frame}{Learned absolute position embeddings}
+  Give position $j$ a learned vector $\mathbf{p}_j\in\mathbb{R}^{d}$ and combine it
+  with the token embedding:
+  \[
+    \mathbf{x}_j = \mathbf{e}_j + \mathbf{p}_j.
+  \]
+
+  The original BERT encoder uses this scheme: a second lookup table contains one
+  vector for each supported absolute position. Addition preserves shape, so the
+  sequence remains $n\times d$.
+
+  \begin{itemize}
+    \item The model can learn position-specific behaviour from data.
+    \item The table introduces a configured maximum sequence length.
+    \item Positions not trained sufficiently may have poorly estimated vectors.
+  \end{itemize}
+
+  Token and position vectors must share the same dimensionality to be added.
+
+  \vfill
+  {\tiny Devlin et al., ``BERT: Pre-training of Deep Bidirectional Transformers
+  for Language Understanding'', 2019.}
+\end{frame}
+
+\begin{frame}{Sinusoidal positions use fixed waves at many scales}
+  For model width $d$, position $j$, and coordinate-pair index $k$:
+  \begin{align*}
+    \operatorname{PE}(j,2k)
+      &= \sin\!\left(j/10000^{2k/d}\right),\\
+    \operatorname{PE}(j,2k+1)
+      &= \cos\!\left(j/10000^{2k/d}\right).
+  \end{align*}
+
+  \begin{itemize}
+    \item $j$ is the integer position in the sequence.
+    \item $k=0,\ldots,d/2-1$ selects a sine/cosine pair.
+    \item Different pairs vary at different rates across the sequence.
+    \item The vectors are generated, not learned from a position table.
+  \end{itemize}
+
+  \vfill
+  {\tiny Vaswani et al., ``Attention Is All You Need'', 2017.}
+\end{frame}
+
+\begin{frame}{Why use several positional frequencies?}
+  A single slowly varying coordinate cannot uniquely describe many positions;
+  a single rapidly varying coordinate repeats too often.
+
+  \begin{center}
+    \begin{tikzpicture}[x=0.65cm,y=0.7cm]
+      \draw[->] (0,0) -- (12.4,0) node[right] {position};
+      \draw[darkblue,thick,domain=0:12,samples=80]
+        plot (\x,{0.65*sin(90*\x)});
+      \draw[mellowyellow!80!black,thick,domain=0:12,samples=80]
+        plot (\x,{1.5+0.65*sin(25*\x)});
+      \node[anchor=west,darkblue] at (12.2,0.6) {fast};
+      \node[anchor=west,mellowyellow!80!black] at (12.2,1.8) {slow};
+    \end{tikzpicture}
+  \end{center}
+
+  Combining phases at multiple scales gives each position a distinctive pattern.
+  The construction can generate vectors beyond the training length, although the
+  rest of the model is not guaranteed to generalise there.
+\end{frame}
+
+\begin{frame}{Relative positions describe offsets, not addresses}
+  For many sequence operations, the useful fact is that token $i$ is two places
+  before token $j$, rather than their absolute addresses.
+
+  \begin{itemize}
+    \item Relative schemes use a representation of the offset $i-j$.
+    \item This can be added as a bias or incorporated into the vectors being
+      compared.
+    \item Rotary position embeddings (RoPE) rotate vector pairs by a
+      position-dependent angle, making their comparison depend on relative offset.
+  \end{itemize}
+
+  We will return to where such information enters when we study attention. The
+  key distinction is \emph{absolute position} $j$ versus \emph{relative position}
+  $i-j$.
+\end{frame}
+
+\begin{frame}{Padding, positions, and masks answer different questions}
+  \begin{description}
+    \item[Token ID] Which vocabulary item is present?
+    \item[Position ID] Where does this item occur in the sequence?
+    \item[Padding mask] Does this tensor location contain a real input token?
+  \end{description}
+
+  \begin{center}
+    \begin{tabular}{c|ccccc}
+      token & \texttt{[SOS]} & \texttt{deep} & \texttt{learn} &
+        \texttt{ing} & \texttt{[PAD]} \\ \hline
+      position & 0 & 1 & 2 & 3 & 4 \\
+      mask & 1 & 1 & 1 & 1 & 0
+    \end{tabular}
+  \end{center}
+
+  Implementations differ in whether padded positions receive ordinary position
+  IDs, but masking must still ensure that padding does not act like content.
+\end{frame}
+
+\begin{frame}{Static embeddings cannot resolve context}
+  A lookup table assigns one vector to each token ID:
+  \begin{center}
+    \texttt{the river \underline{bank}}
+    \qquad
+    \texttt{the investment \underline{bank}}
+  \end{center}
+  Both occurrences initially retrieve the same vector $E[i_{\texttt{bank}}]$.
+
+  A \emph{contextual} representation is produced after a sequence model combines
+  information across positions:
+  \[
+    \mathbf{h}_j
+      = f_j(\mathbf{x}_1,\ldots,\mathbf{x}_n).
+  \]
+
+  The two occurrences can therefore have different $\mathbf{h}_j$, even though
+  they began with the same token embedding.
+\end{frame}
+
+\begin{frame}{Tokenisation does not itself create meaning in context}
+  \begin{center}
+    text
+    $\xrightarrow{\text{tokenizer}}$
+    IDs
+    $\xrightarrow{\text{lookup + position}}$
+    $\mathbf{x}_{1:n}$
+    $\xrightarrow{\text{sequence encoder}}$
+    $\mathbf{h}_{1:n}$
+  \end{center}
+
+  \begin{itemize}
+    \item The tokenizer is a discrete, normally fixed preprocessing model.
+    \item The embedding table learns a static vector for each vocabulary item.
+    \item The encoder learns to make each vector depend on surrounding tokens.
+    \item Subword pieces can be contextualised and then combined for a word- or
+      sequence-level task.
+  \end{itemize}
+
+  RNNs, which we study next, and Transformer encoders, which come later, provide
+  different mechanisms for constructing $\mathbf{h}_{1:n}$.
+\end{frame}
+
+\begin{frame}{The representation pipeline}
+  \begin{enumerate}
+    \item Normalise and tokenise text using a fixed, documented model.
+    \item Map tokens to IDs, adding boundary symbols, padding, and masks.
+    \item Look up token vectors and make order observable.
+    \item Use a sequence encoder to turn static inputs into contextual states.
+  \end{enumerate}
+
+  \vspace{0.8em}
+  \begin{block}{The central trade-off}
+    Larger reusable pieces shorten sequences; smaller pieces improve coverage and
+    parameter sharing. The tokenizer decides where that compromise is made.
+  \end{block}
+\end{frame}
 
 \end{document}

@@ -46,7 +46,11 @@
 
 \title[AICE3002 / AICE6001]{\lecturetitle}
 \subtitle{\lecturesubtitle}
-\author{Jonathon Hare and Antonia Marcu}
+\ifdefined\lectureauthor
+  \author{\lectureauthor}
+\else
+  \author{Jonathon Hare and Antonia Marcu}
+\fi
 \institute[]{
   Vision, Learning and Control\\
   University of Southampton
