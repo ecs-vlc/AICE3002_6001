@@ -37,11 +37,11 @@
   \end{block}
 
   The mapping determines what the model can see, how long its inputs are, and
-  which symbols share parameters.
+  which symbols share the same representation.
 \end{frame}
 
 \begin{frame}{Tokenisation is a modelling decision}
-  The same string admits many reasonable segmentations:
+  The same string allows for many reasonable segmentations:
 
   \vspace{0.8em}
   \begin{center}
@@ -71,7 +71,7 @@
     \item \texttt{AICE3002/6001}, \texttt{3.14}, \texttt{hello@example.org}
     \item punctuation, emoji, URLs, code, and hashtags
     \item languages that do not mark every word boundary with a space
-    \item productive morphology: \texttt{train}, \texttt{trained},
+    \item morphology, stems, etc: \texttt{train}, \texttt{trained},
       \texttt{retraining}, \texttt{trainability}
   \end{itemize}
 
@@ -97,12 +97,12 @@
     \texttt{1.0} $\neq$ \texttt{1000}
   \end{center}
 
-  The normaliser and tokenizer are therefore part of the model specification,
+  The normaliser and tokeniser are therefore part of the model specification,
   not incidental data cleaning.
 \end{frame}
 
 \begin{frame}{A vocabulary maps tokens to integer IDs}
-  Let $\mathcal{V}$ be a finite vocabulary. The tokenizer produces
+  Let $\mathcal{V}$ be a finite vocabulary. The tokeniser produces
   \[
     (t_1,\ldots,t_n)
     \quad\longrightarrow\quad
@@ -125,7 +125,7 @@
     $(284,931,47)$
   \end{center}
 
-  IDs are arbitrary labels. ID 931 is not ``larger'' or more similar than ID 284.
+  IDs are arbitrary numerical labels (indices). ID 931 is not ``larger'' or more similar than ID 284.
 \end{frame}
 
 \begin{frame}{Special tokens communicate structure}
@@ -170,13 +170,13 @@
     \item names and places;
     \item new products, slang, and technical terms;
     \item spelling variants and typing errors; and
-    \item unseen inflections or compounds.
+    \item unseen inflections or compound words.
   \end{itemize}
 
   Mapping all of them to \texttt{[UNK]} discards their internal structure:
   \[
     \begin{aligned}
-      &\texttt{retokenisation},\ \texttt{tokenizer},\ \texttt{tokenised}\\
+      &\texttt{retokenisation},\ \texttt{tokeniser},\ \texttt{tokenised}\\
       &\hspace{3em}\longrightarrow
         \texttt{[UNK]},\ \texttt{[UNK]},\ \texttt{[UNK]}.
     \end{aligned}
@@ -197,13 +197,13 @@
     \item a character is not always one byte or one visible glyph.
   \end{itemize}
 
-  Word tokens reuse whole meanings efficiently; character tokens provide robust
-  coverage. Subword tokenisation aims for a compromise.
+  Word tokens reuse whole meanings efficiently. Character tokens provide robust
+  coverage. \textit{Subword tokenisation aims for a compromise.}
 \end{frame}
 
 \begin{frame}{Subwords balance coverage and sequence length}
-  Frequent strings can be single tokens; rarer strings are composed from smaller
-  pieces:
+  \begin{block}{}
+  Idea: Frequent strings can be single tokens. Rarer strings are composed from smaller pieces:
 
   \begin{center}
     \tokenbox{train}
@@ -212,6 +212,7 @@
     \qquad
     \tokenbox{re} \tokenbox{train} \tokenbox{ing}
   \end{center}
+  \end{block}
 
   A subword vocabulary:
   \begin{itemize}
@@ -294,7 +295,7 @@
   \]
 
   We do \emph{not} choose new merges from the evaluation example. Training and
-  inference must use exactly the same tokenizer.
+  inference must use exactly the same tokeniser.
 
   \begin{block}{The merge budget controls granularity}
     More merges give shorter sequences and a larger embedding table; fewer merges
@@ -302,7 +303,7 @@
   \end{block}
 \end{frame}
 
-\begin{frame}{BPE is one subword construction, not the definition}
+\begin{frame}{BPE is only one example of subword construction}
   \begin{description}
     \item[BPE] learns an ordered sequence of frequent pair merges.
     \item[WordPiece] learns a subword vocabulary and commonly encodes using
@@ -313,7 +314,7 @@
 
   \vspace{0.4em}
   Different algorithms can produce different, equally valid segmentations.
-  Always report the actual tokenizer and vocabulary, rather than saying only
+  Always report the actual tokeniser and vocabulary, rather than saying only
   ``we used subwords''.
 \end{frame}
 
@@ -330,7 +331,7 @@
   \end{itemize}
 
   \begin{alertblock}{Token $\neq$ word $\neq$ character $\neq$ byte}
-    Token counts should not be interpreted as word counts unless the tokenizer
+    Token counts should not be interpreted as word counts unless the tokeniser
     actually uses words.
   \end{alertblock}
 \end{frame}
@@ -348,9 +349,11 @@
 
   A larger vocabulary increases the parameters in the embedding/output tables.
   A longer sequence increases the work done by the sequence model.
-
-  Later, self-attention over $n$ positions will require an $n\times n$ matrix:
+  \\[2ex]
+  \begin{alertblock}{}
+  Self-attention over $n$ positions will require an $n\times n$ matrix:
   tokenisation can therefore change computational cost substantially.
+  \end{alertblock}
 \end{frame}
 
 \begin{frame}{Fragmentation is not distributed evenly}
@@ -361,26 +364,31 @@
     \item Rare languages, names, and specialist terms may fragment more heavily.
     \item Under a fixed token limit, heavier fragmentation means less source text
       fits into the model.
-    \item Changing the tokenizer changes the inputs, compute, and often model
-      quality---even when the architecture is unchanged.
+    \item Changing the tokeniser changes the inputs, compute, and often model
+      quality...
+      \begin{itemize}
+        \item ...even when the architecture is unchanged.
+      \end{itemize} 
   \end{itemize}
 
-  Inspect token lengths on the populations and domains that matter for the task;
-  an average over the training corpus can hide important differences.
+  \begin{block}{}
+  Inspect token lengths on the populations and domains that matter for the model's task.
+  An average over the training corpus can hide important differences.
+  \end{block}
 \end{frame}
 
-\begin{frame}{The tokenizer is fitted, frozen, and versioned}
+\begin{frame}{The tokeniser is fitted and frozen}
   Vocabulary learning uses data and must respect the experimental design:
   \begin{itemize}
-    \item learn or select the tokenizer using training data (or a declared
+    \item learn or select the tokeniser using training data (or a declared
       external pretraining corpus);
     \item do not adapt merge rules or vocabulary to the test set;
     \item fix normalisation, special-token conventions, and maximum length; and
-    \item save the tokenizer with the model checkpoint.
+    \item save the tokeniser with the model checkpoint.
   \end{itemize}
 
-  For a pretrained model, its embedding table expects the matching tokenizer.
-  Replacing the tokenizer usually changes the meaning and number of its input IDs.
+  For a pretrained model, its embedding table expects the matching tokeniser.
+  Replacing the tokeniser usually changes the meaning and number of its input IDs.
 \end{frame}
 
 \begin{frame}{Token IDs become learned vectors}
@@ -554,7 +562,7 @@
 \begin{frame}{Tokenisation does not itself create meaning in context}
   \begin{center}
     text
-    $\xrightarrow{\text{tokenizer}}$
+    $\xrightarrow{\text{tokeniser}}$
     IDs
     $\xrightarrow{\text{lookup + position}}$
     $\mathbf{x}_{1:n}$
@@ -563,7 +571,7 @@
   \end{center}
 
   \begin{itemize}
-    \item The tokenizer is a discrete, normally fixed preprocessing model.
+    \item The tokeniser is a discrete, normally fixed preprocessing model.
     \item The embedding table learns a static vector for each vocabulary item.
     \item The encoder learns to make each vector depend on surrounding tokens.
     \item Subword pieces can be contextualised and then combined for a word- or
@@ -585,7 +593,7 @@
   \vspace{0.8em}
   \begin{block}{The central trade-off}
     Larger reusable pieces shorten sequences; smaller pieces improve coverage and
-    parameter sharing. The tokenizer decides where that compromise is made.
+    parameter sharing. The tokeniser decides where that compromise is made.
   \end{block}
 \end{frame}
 
